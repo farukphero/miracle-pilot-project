@@ -3,7 +3,7 @@ import {
   TExperiences,
   TOtherQualifications,
   TTeacher,
-} from './teacher.interface';
+} from './academic.interface';
 
 // Mongoose Schema
 const OtherQualificationsSchema = new Schema<TOtherQualifications>(
@@ -33,7 +33,6 @@ const ExperiencesSchema = new Schema<TExperiences>(
 
 const TeacherSchema = new Schema<TTeacher>(
   {
-    userId: { type: String, required: [true, 'User ID is required.'] },
     teacherId: { type: String, required: [true, 'Teacher ID is required.'] },
     name: { type: String, required: [true, 'Name is required.'] },
     contactNumber: {
@@ -87,12 +86,6 @@ const TeacherSchema = new Schema<TTeacher>(
       type: String,
       required: [true, 'Board or university is required.'],
     },
-    
-    isDeleted: {
-      type: Boolean,
-      default: false
-    },
-
     otherQualifications: { type: [OtherQualificationsSchema], required: false },
     experiences: { type: [ExperiencesSchema], required: false },
   },

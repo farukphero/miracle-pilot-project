@@ -1,5 +1,4 @@
 export interface TTeacher {
-  userId: string;
   teacherId: string;
   name: string;
   contactNumber: string;
@@ -25,7 +24,6 @@ export interface TTeacher {
   passingYear: number;
   result: string;
   boardOrUniversity: string;
-  isDeleted: boolean
 
   otherQualifications: TOtherQualifications[];
 

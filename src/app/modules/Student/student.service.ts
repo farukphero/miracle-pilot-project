@@ -1,29 +1,89 @@
 import { StatusCodes } from 'http-status-codes';
-
 import AppError from '../../errors/AppError';
 import QueryBuilder from '../../builder/QueryBuilder';
-import sanitizePayload from '../../middlewares/updateDataValidtion';
+import sanitizePayload from '../../middlewares/updateDataValidation';
 import { TStudent } from './student.interface';
 import { Student } from './student.model';
+import { Auth } from '../Auth/auth.model';
+import mongoose from 'mongoose';
+import { generateStudentId } from './student.utils';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
 const createStudentIntoDB = async (payload: TStudent) => {
-  const existingStudent = await Student.findOne({
-    $and: [
-      { class: payload.class },
-      { roll: payload.roll },
-      { section: payload.section },
-    ],
-  });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (existingStudent) {
-    throw new AppError(
-      StatusCodes.CONFLICT,
-      'A student with the same roll, class and section already exists.',
+  try {
+    // Check for existing student with the same roll, class, and section
+    const existingStudent = await Student.findOne(
+      {
+        $and: [
+          { class: payload.class },
+          { roll: payload.roll },
+          { section: payload.section },
+        ],
+      },
+      null,
+      { session }
     );
+
+    if (existingStudent) {
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        'A student with the same roll, class, and section already exists.'
+      );
+    }
+    if (!payload.userId) {
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        'Please add your Id.'
+      );
+    }
+
+    // Check if the user is registered in Auth
+    const checkUserAuth = await Auth.findOne({ userId: payload.userId }, null, { session });
+
+    if (!checkUserAuth) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
+    }
+
+    // Generate a student ID
+    const studentId = await generateStudentId();
+
+    // Update the Auth document
+    checkUserAuth.isCompleted = true;
+    checkUserAuth.role = 'student';
+
+    if (!checkUserAuth.password) {
+
+      const hashedPassword = await bcrypt.hash(
+        studentId,
+        Number(config.bcrypt_salt_rounds),
+      );
+
+      checkUserAuth.password = hashedPassword; // Assign hashed password if not already set
+    }
+
+    await checkUserAuth.save({ session });
+
+    // Create the student record, including the generated studentId
+    const studentData = { ...payload, studentId };
+    const student = await Student.create([studentData], { session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return student[0]; // Return the first element as `create` with an array returns an array
+  } catch (error) {
+    // Roll back the transaction if an error occurs
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-  const student = await Student.create(payload);
-  return student;
 };
+
 
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
@@ -81,14 +141,24 @@ const updateStudentInDB = async (id: string, payload: TStudent) => {
 };
 
 const deleteStudentFromDB = async (id: string) => {
-  const deletedStudent = await Student.findByIdAndDelete(id);
+  // Find the student by ID
+  const student = await Student.findById(id);
 
-  if (!deletedStudent) {
+  // Check if student exists
+  if (!student) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Student not found.');
   }
 
-  return deletedStudent;
+  // Mark the student as deleted
+  student.isDeleted = true;
+
+  // Save changes to the database
+  await student.save();
+
+  // Return the updated student document
+  return student;
 };
+
 
 export const StudentServices = {
   createStudentIntoDB,

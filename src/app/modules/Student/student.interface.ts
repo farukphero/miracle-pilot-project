@@ -8,6 +8,8 @@ export interface TAcademicResult {
 
 // Interface for Student
 export interface TStudent {
+  userId: string;
+  studentId: string;
   name: string;
   roll: string;
   contactNumber: string;
@@ -52,4 +54,6 @@ export interface TStudent {
   relationshipWithLocalGuardian: string;
   localGuardianImage: string;
   localGuardianNumber: string;
+
+  isDeleted:boolean
 }

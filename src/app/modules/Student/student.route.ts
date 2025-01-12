@@ -23,6 +23,6 @@ router
     validateRequest(studentValidation.updateStudentValidationSchema),
     studentController.updateStudent,
   )
-  .delete(studentController.deleteStudent);
+  .patch(studentController.deleteStudent);
 
 export const StudentRoutes = router;

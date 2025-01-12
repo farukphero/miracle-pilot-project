@@ -1,9 +1,13 @@
-import { Teacher } from './teacher.model';
+import { Teacher } from './academic.model';
 
 const findLastTeacherId = async () => {
-  const lastTeacher = await Teacher.findOne({ teacherId: { $exists: true } })
+  const lastTeacher = await Teacher.findOne(
+    {},
+    {
+      teacherId: 1,
+    },
+  )
     .sort({ createdAt: -1 })
-    .select('teacherId')
     .lean();
 
   return lastTeacher?.teacherId
@@ -19,6 +23,6 @@ export const generateTeacherId = async ({
   const year = joiningDate.split('-')[2].slice(-2); // Extracts '24' from '15-12-2024'
   const currentId = (await findLastTeacherId()) || '0000';
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
-  incrementId = `T-${year}${incrementId}`;
+  incrementId = `T:${year}${incrementId}`;
   return incrementId;
 };
