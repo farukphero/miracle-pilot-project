@@ -98,21 +98,6 @@ const getSingleTeacherDetails = async (id: string) => {
 };
 
 const updateTeacherInDB = async (id: string, payload: TTeacher) => {
-  // const existingStudent = await Teacher.findOne({
-  //   $and: [
-  //     { class: payload.class },
-  //     { roll: payload.roll },
-  //     { section: payload.section },
-  //   ],
-  //   _id: { $ne: id },
-  // });
-
-  // if (existingStudent) {
-  //   throw new AppError(
-  //     StatusCodes.CONFLICT,
-  //     'A student with the same roll, class and section already exists.',
-  //   );
-  // }
 
   const sanitizeData = sanitizePayload(payload);
 
@@ -129,13 +114,22 @@ const updateTeacherInDB = async (id: string, payload: TTeacher) => {
 };
 
 const deleteTeacherFromDB = async (id: string) => {
-  const deletedTeacher = await Teacher.findByIdAndDelete(id);
+  // Find the student by ID
+  const teacher = await Teacher.findById(id);
 
-  if (!deletedTeacher) {
+  // Check if student exists
+  if (!teacher) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Teacher not found.');
   }
 
-  return deletedTeacher;
+  // Mark the student as deleted
+  teacher.isDeleted = true;
+
+  // Save changes to the database
+  await teacher.save();
+
+  // Return the updated student document
+  return teacher;
 };
 
 export const TeacherServices = {
