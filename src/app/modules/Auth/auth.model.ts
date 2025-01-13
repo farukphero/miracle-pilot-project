@@ -64,12 +64,6 @@ authSchema.pre('save', function (next) {
   if (!this.isModified('password')) {
     return next();
   }
-  // Check if password is already hashed
-  // const isHashed = this.password.startsWith('$2b$');
-  // if (isHashed) {
-  //   return next();
-  // }
-
 
   bcrypt.hash(
     this.password,
@@ -101,8 +95,10 @@ authSchema.pre('aggregate', function (next) {
 });
 
 // Method to compare passwords
-authSchema.methods.comparePassword = function (candidatePassword: string): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
+authSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
+  const check = await bcrypt.compare(password, this.password);
+
+  return check
 };
 
 

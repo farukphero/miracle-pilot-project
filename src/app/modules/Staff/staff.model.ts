@@ -2,8 +2,8 @@ import mongoose, { Model, Schema } from 'mongoose';
 import {
   TExperiences,
   TOtherQualifications,
-  TTeacher,
-} from './teacher.interface';
+  TStaff,
+} from './staff.interface';
 
 // Mongoose Schema
 const OtherQualificationsSchema = new Schema<TOtherQualifications>(
@@ -31,14 +31,14 @@ const ExperiencesSchema = new Schema<TExperiences>(
   },
 );
 
-const TeacherSchema = new Schema<TTeacher>(
+const StaffSchema = new Schema<TStaff>(
   {
     auth: {
       type: Schema.Types.ObjectId,
       ref: "Auth"
     },
     userId: { type: String, required: [true, 'User ID is required.'] },
-    teacherId: { type: String, required: [true, 'Teacher ID is required.'] },
+    staffId: { type: String, required: [true, 'Staff ID is required.'] },
     name: { type: String, required: [true, 'Name is required.'] },
     contactNumber: {
       type: String,
@@ -106,22 +106,22 @@ const TeacherSchema = new Schema<TTeacher>(
 );
 
 
-TeacherSchema.pre('find', function (next) {
+StaffSchema.pre('find', function (next) {
   this.where({ isDeleted: { $ne: true } });
   next();
 });
 
-TeacherSchema.pre('findOne', function (next) {
+StaffSchema.pre('findOne', function (next) {
   this.where({ isDeleted: { $ne: true } });
   next();
 });
 
-TeacherSchema.pre('aggregate', function (next) {
+StaffSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
-export const Teacher: Model<TTeacher> = mongoose.model<TTeacher>(
-  'Teacher',
-  TeacherSchema,
+export const Staff: Model<TStaff> = mongoose.model<TStaff>(
+  'Staff',
+  StaffSchema,
 );

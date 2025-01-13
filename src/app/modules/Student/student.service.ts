@@ -51,24 +51,29 @@ const createStudentIntoDB = async (payload: TStudent) => {
     // Generate a student ID
     const studentId = await generateStudentId();
 
-    // Update the Auth document
-    checkUserAuth.isCompleted = true;
-    checkUserAuth.role = 'student';
-
-    if (!checkUserAuth.password) {
-
+    if (!checkUserAuth.password || checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
         studentId,
         Number(config.bcrypt_salt_rounds),
       );
 
-      checkUserAuth.password = hashedPassword; // Assign hashed password if not already set
+      // Update using findOneAndUpdate
+      await Auth.findOneAndUpdate(
+        { userId: payload.userId }, // Query filter
+        {
+          $set: {
+            isCompleted: true,
+            role: 'student',
+            password: hashedPassword,
+            userId: ""
+          },
+        },
+        { session, new: true }, // Use the session and return the updated document
+      );
     }
 
-    await checkUserAuth.save({ session });
-
     // Create the student record, including the generated studentId
-    const studentData = { ...payload, studentId };
+    const studentData = { ...payload, studentId, auth: checkUserAuth._id };
     const student = await Student.create([studentData], { session });
 
     // Commit the transaction

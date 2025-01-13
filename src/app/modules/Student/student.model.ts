@@ -19,8 +19,12 @@ const AcademicResultSchema: Schema<TAcademicResult> =
 
 const StudentSchema: Schema<TStudent> = new Schema<TStudent>(
   {
+    auth: {
+      type: Schema.Types.ObjectId,
+      ref: 'Auth',
+    },
     userId: { type: String, required: [true, 'User Id is required'] },
-    studentId: { type: String, required: [true, 'Student Id is required'] },
+    studentId: { type: String, required: [true, 'Student Id is required'], trim: true },
     name: { type: String, required: [true, 'Name is required'] },
     roll: { type: String, required: [true, 'Roll number is required'] },
     contactNumber: {

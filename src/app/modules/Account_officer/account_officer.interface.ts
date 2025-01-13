@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 
-export interface TTeacher {
+export interface TAccountOfficer {
   auth: Types.ObjectId
   userId: string;
-  teacherId: string;
+  accountOfficerId: string;
   name: string;
   contactNumber: string;
   email: string;

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 // Interface for Academic Result
 export interface TAcademicResult {
   class: string;
@@ -8,6 +10,10 @@ export interface TAcademicResult {
 
 // Interface for Student
 export interface TStudent {
+  auth: {
+    type: Types.ObjectId,
+    ref: 'Auth',
+  },
   userId: string;
   studentId: string;
   name: string;
@@ -55,5 +61,5 @@ export interface TStudent {
   localGuardianImage: string;
   localGuardianNumber: string;
 
-  isDeleted:boolean
+  isDeleted: boolean
 }

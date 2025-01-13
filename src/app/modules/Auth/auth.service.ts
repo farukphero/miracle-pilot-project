@@ -79,7 +79,7 @@ const loginUserWithDB = async (payload: TUser) => {
     password as string,
   );
 
-  console.log(isPasswordValid)
+  console.log('Password match status:', isPasswordValid);
 
   if (!isPasswordValid) {
     throw new Error('Invalid password!');

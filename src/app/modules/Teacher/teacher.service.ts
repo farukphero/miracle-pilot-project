@@ -17,15 +17,21 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
   session.startTransaction();
 
   try {
+    // Validate `userId`
+    if (!payload.userId) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Please provide your ID.');
+    }
+
+    // Check if staff already exists
+    const existingStaff = await Teacher.findOne({ userId: payload.userId }).session(session);
+    if (existingStaff) {
+      throw new AppError(StatusCodes.CONFLICT, `Teacher already exists with ID ${payload.userId}`);
+    }
+
     // Generate teacher ID
     const teacherId = await generateTeacherId({
       joiningDate: payload.joiningDate,
     });
-
-    // Validate userId
-    if (!payload.userId) {
-      throw new AppError(StatusCodes.CONFLICT, 'Please add your Id.');
-    }
 
     // Check if the user is registered in Auth
     const checkUserAuth = await Auth.findOne({ userId: payload.userId }).session(session);
@@ -34,19 +40,26 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
     }
 
-    // Update the Auth document
-    checkUserAuth.isCompleted = true;
-    checkUserAuth.role = 'teacher';
-
-    if (!checkUserAuth.password) {
+    if (!checkUserAuth.password || checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
         teacherId,
         Number(config.bcrypt_salt_rounds),
       );
-      checkUserAuth.password = hashedPassword; // Assign hashed password if not already set
+      await Auth.findOneAndUpdate(
+        { userId: payload.userId }, // Query filter
+        {
+          $set: {
+            isCompleted: true,
+            role: 'teacher',
+            password: hashedPassword,
+             userId: ""
+          },
+        },
+        { session, new: true }, // Use the session and return the updated document
+      );
     }
 
-    await checkUserAuth.save({ session });
+
 
     // Sanitize the payload
     const sanitizeData = sanitizePayload(payload);
@@ -55,6 +68,7 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     const teacherData = new Teacher({
       ...sanitizeData,
       teacherId,
+      auth: checkUserAuth._id
     });
 
     const savedTeacher = await teacherData.save({ session });

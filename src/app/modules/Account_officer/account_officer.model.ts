@@ -1,9 +1,9 @@
 import mongoose, { Model, Schema } from 'mongoose';
 import {
+  TAccountOfficer,
   TExperiences,
   TOtherQualifications,
-  TTeacher,
-} from './teacher.interface';
+} from './account_officer.interface';
 
 // Mongoose Schema
 const OtherQualificationsSchema = new Schema<TOtherQualifications>(
@@ -31,14 +31,14 @@ const ExperiencesSchema = new Schema<TExperiences>(
   },
 );
 
-const TeacherSchema = new Schema<TTeacher>(
+const AccountOfficerSchema = new Schema<TAccountOfficer>(
   {
     auth: {
       type: Schema.Types.ObjectId,
-      ref: "Auth"
+      ref: 'Auth',
     },
     userId: { type: String, required: [true, 'User ID is required.'] },
-    teacherId: { type: String, required: [true, 'Teacher ID is required.'] },
+    accountOfficerId: { type: String, required: [true, 'Account officer ID is required.'] },
     name: { type: String, required: [true, 'Name is required.'] },
     contactNumber: {
       type: String,
@@ -106,22 +106,22 @@ const TeacherSchema = new Schema<TTeacher>(
 );
 
 
-TeacherSchema.pre('find', function (next) {
+AccountOfficerSchema.pre('find', function (next) {
   this.where({ isDeleted: { $ne: true } });
   next();
 });
 
-TeacherSchema.pre('findOne', function (next) {
+AccountOfficerSchema.pre('findOne', function (next) {
   this.where({ isDeleted: { $ne: true } });
   next();
 });
 
-TeacherSchema.pre('aggregate', function (next) {
+AccountOfficerSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
-export const Teacher: Model<TTeacher> = mongoose.model<TTeacher>(
-  'Teacher',
-  TeacherSchema,
+export const AccountOfficer: Model<TAccountOfficer> = mongoose.model<TAccountOfficer>(
+  'AccountOfficer',
+  AccountOfficerSchema,
 );
