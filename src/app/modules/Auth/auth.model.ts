@@ -7,7 +7,6 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
   {
     userId: {
       type: String,
-      unique: true,
     },
     firstName: {
       type: String,

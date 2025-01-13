@@ -1,10 +1,11 @@
 import { Router } from 'express';
- 
+
 import { StudentRoutes } from '../modules/Student/student.route';
 import { TeacherRoutes } from '../modules/Teacher/teacher.route';
 import { AuthRoutes } from '../modules/Auth/auth.route';
 import { StaffRoutes } from '../modules/Staff/staff.route';
 import { AccountOfficerRoutes } from '../modules/Account_officer/account_officer.route';
+import { AdminRoutes } from '../modules/Admin/admin.route';
 
 const router = Router();
 
@@ -12,6 +13,10 @@ const moduleRoutes = [
   {
     path: '/',
     route: AuthRoutes,
+  },
+  {
+    path: '/admin',
+    route: AdminRoutes,
   },
   {
     path: '/students',

@@ -12,13 +12,15 @@ const findLastUserId = async () => {
 
 export const generateUserId = async () => {
   const currentYear = new Date().getFullYear().toString().slice(-2);
-  const currentId = (await findLastUserId()) || (0).toString();
+  // const currentId = (await findLastUserId()) || (0).toString();
+  // let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
 
-  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+   // Generate a random 4-digit number and pad it to ensure 4 digits.
+   let randomId = Math.floor(1000 + Math.random() * 9000).toString();
 
-  incrementId = `MC-${currentYear}${incrementId}`;
+   randomId = `MC-${currentYear}${randomId}`;
 
-  return incrementId;
+  return randomId;
 };
 
 
