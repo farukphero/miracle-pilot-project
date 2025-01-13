@@ -1,11 +1,11 @@
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import QueryBuilder from '../../builder/QueryBuilder';
 import sanitizePayload from '../../middlewares/updateDataValidation';
 import { Auth } from '../Auth/auth.model';
 import config from '../../config';
-import bcrypt from 'bcrypt';
-import mongoose from 'mongoose';
 import { generateAccountOfficerId } from './account_officer.utils';
 import { TAccountOfficer } from './account_officer.interface';
 import { AccountOfficer } from './account_officer.model';
@@ -131,21 +131,20 @@ const updateAccountOfficerInDB = async (id: string, payload: TAccountOfficer) =>
 };
 
 const deleteAccountOfficerFromDB = async (id: string) => {
-  // Find the student by ID
+  // Find the account officer by ID
   const accountOfficer = await AccountOfficer.findById(id);
 
-  // Check if student exists
+  // Check if account officer exists
   if (!accountOfficer) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Account officer not found.');
   }
 
-  // Mark the student as deleted
+  // Mark the account officer as deleted
   accountOfficer.isDeleted = true;
 
   // Save changes to the database
   await accountOfficer.save();
 
-  // Return the updated student document
   return accountOfficer;
 };
 

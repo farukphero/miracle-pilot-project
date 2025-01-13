@@ -119,18 +119,17 @@ const deleteStaffFromDB = async (id: string) => {
   // Find the Staff by ID
   const staff = await Staff.findById(id);
 
-  // Check if student exists
+  // Check if Staff exists
   if (!staff) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Staff not found.');
   }
 
-  // Mark the student as deleted
+  // Mark the Staff as deleted
   staff.isDeleted = true;
 
   // Save changes to the database
   await staff.save();
 
-  // Return the updated student document
   return staff;
 };
 
