@@ -24,7 +24,6 @@ router
     studentController.updateStudent,
   )
   .patch(studentController.migrateClass)
-  .delete(studentController.deleteStudent)
-  ;
+  .delete(studentController.deleteStudent);
 
 export const StudentRoutes = router;

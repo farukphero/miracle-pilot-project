@@ -2,7 +2,6 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { StaffServices } from './staff.service';
- 
 
 const createStaff = catchAsync(async (req, res) => {
   const staff = await StaffServices.createStaffIntoDB(req.body);
@@ -23,7 +22,6 @@ const getAllStaff = catchAsync(async (req, res) => {
   });
 });
 
-
 const getSingleStaff = catchAsync(async (req, res) => {
   const { id } = req.params;
 
@@ -36,7 +34,6 @@ const getSingleStaff = catchAsync(async (req, res) => {
     data: staff,
   });
 });
-
 
 const updateStaff = catchAsync(async (req, res) => {
   const { id } = req.params;

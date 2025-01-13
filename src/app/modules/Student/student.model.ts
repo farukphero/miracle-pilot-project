@@ -24,7 +24,11 @@ const StudentSchema: Schema<TStudent> = new Schema<TStudent>(
       ref: 'Auth',
     },
     userId: { type: String, required: [true, 'User Id is required'] },
-    studentId: { type: String, required: [true, 'Student Id is required'], trim: true },
+    studentId: {
+      type: String,
+      required: [true, 'Student Id is required'],
+      trim: true,
+    },
     name: { type: String, required: [true, 'Name is required'] },
     roll: { type: String, required: [true, 'Roll number is required'] },
     contactNumber: {
@@ -128,14 +132,13 @@ const StudentSchema: Schema<TStudent> = new Schema<TStudent>(
 
     isDeleted: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   {
     timestamps: true,
   },
 );
-
 
 StudentSchema.pre('find', function (next) {
   this.where({ isDeleted: false }); // Filter where isDeleted is false
@@ -151,7 +154,6 @@ StudentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: false } }); // Add match to pipeline
   next();
 });
-
 
 export const Student: Model<TStudent> = mongoose.model<TStudent>(
   'Student',

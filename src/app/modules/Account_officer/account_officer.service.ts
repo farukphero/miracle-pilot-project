@@ -22,9 +22,14 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
     }
 
     // Check if staff already exists
-    const existingStaff = await AccountOfficer.findOne({ userId: payload.userId }).session(session);
+    const existingStaff = await AccountOfficer.findOne({
+      userId: payload.userId,
+    }).session(session);
     if (existingStaff) {
-      throw new AppError(StatusCodes.CONFLICT, `Account officer already exists with ID ${payload.userId}`);
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        `Account officer already exists with ID ${payload.userId}`,
+      );
     }
 
     // Generate AccountOfficer ID
@@ -32,17 +37,16 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
       joiningDate: payload.joiningDate,
     });
 
-
-
     // Check if the user is registered in Auth
-    const checkUserAuth = await Auth.findOne({ userId: payload.userId }).session(session);
+    const checkUserAuth = await Auth.findOne({
+      userId: payload.userId,
+    }).session(session);
 
     if (!checkUserAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
     }
 
     // Update the Auth document
-
 
     if (!checkUserAuth.password || checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
@@ -56,13 +60,12 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
             isCompleted: true,
             role: 'account_officer',
             password: hashedPassword,
-            userId: ""
+            userId: '',
           },
         },
         { session, new: true }, // Use the session and return the updated document
       );
     }
-
 
     // Sanitize the payload
     const sanitizeData = sanitizePayload(payload);
@@ -71,7 +74,7 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
     const AccountOfficerData = new AccountOfficer({
       ...sanitizeData,
       accountOfficerId,
-      auth: checkUserAuth._id
+      auth: checkUserAuth._id,
     });
 
     const savedAccountOfficer = await AccountOfficerData.save({ session });
@@ -88,7 +91,6 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
     throw error;
   }
 };
-
 
 const getAllAccountOfficerFromDB = async (query: Record<string, unknown>) => {
   const accountOfficerQuery = new QueryBuilder(AccountOfficer.find(), query)
@@ -114,14 +116,20 @@ const getSingleAccountOfficerDetails = async (id: string) => {
   return singleAccountOfficer;
 };
 
-const updateAccountOfficerInDB = async (id: string, payload: TAccountOfficer) => {
-
+const updateAccountOfficerInDB = async (
+  id: string,
+  payload: TAccountOfficer,
+) => {
   const sanitizeData = sanitizePayload(payload);
 
-  const updatedAccountOfficer = await AccountOfficer.findByIdAndUpdate(id, sanitizeData, {
-    new: true,
-    runValidators: true,
-  });
+  const updatedAccountOfficer = await AccountOfficer.findByIdAndUpdate(
+    id,
+    sanitizeData,
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 
   if (!updatedAccountOfficer) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Account officer not found.');

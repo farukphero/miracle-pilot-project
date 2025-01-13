@@ -35,7 +35,7 @@ const TeacherSchema = new Schema<TTeacher>(
   {
     auth: {
       type: Schema.Types.ObjectId,
-      ref: "Auth"
+      ref: 'Auth',
     },
     userId: { type: String, required: [true, 'User ID is required.'] },
     teacherId: { type: String, required: [true, 'Teacher ID is required.'] },
@@ -94,7 +94,7 @@ const TeacherSchema = new Schema<TTeacher>(
 
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     otherQualifications: { type: [OtherQualificationsSchema], required: false },
@@ -104,7 +104,6 @@ const TeacherSchema = new Schema<TTeacher>(
     timestamps: true,
   },
 );
-
 
 TeacherSchema.pre('find', function (next) {
   this.where({ isDeleted: { $ne: true } });

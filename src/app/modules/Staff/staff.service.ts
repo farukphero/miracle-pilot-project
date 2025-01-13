@@ -22,23 +22,33 @@ const createStaffIntoDB = async (payload: TStaff) => {
     }
 
     // Check if staff already exists
-    const existingStaff = await Staff.findOne({ userId: payload.userId }).session(session);
+    const existingStaff = await Staff.findOne({
+      userId: payload.userId,
+    }).session(session);
     if (existingStaff) {
-      throw new AppError(StatusCodes.CONFLICT, `Staff already exists with ID ${payload.userId}`);
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        `Staff already exists with ID ${payload.userId}`,
+      );
     }
 
     // Generate staff ID
     const staffId = await generateStaffId({ joiningDate: payload.joiningDate });
 
     // Verify if the user exists in Auth
-    const userAuth = await Auth.findOne({ userId: payload.userId }).session(session);
+    const userAuth = await Auth.findOne({ userId: payload.userId }).session(
+      session,
+    );
     if (!userAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'User is not registered.');
     }
 
     // If no password is set, update the user's credentials
     if (!userAuth.password || userAuth.userId) {
-      const hashedPassword = await bcrypt.hash(staffId, Number(config.bcrypt_salt_rounds));
+      const hashedPassword = await bcrypt.hash(
+        staffId,
+        Number(config.bcrypt_salt_rounds),
+      );
       await Auth.findOneAndUpdate(
         { userId: payload.userId },
         {
@@ -46,16 +56,20 @@ const createStaffIntoDB = async (payload: TStaff) => {
             isCompleted: true,
             role: 'staff',
             password: hashedPassword,
-            userId: ""
+            userId: '',
           },
         },
-        { session, new: true }
+        { session, new: true },
       );
     }
 
     // Sanitize and prepare the staff payload
     const sanitizedPayload = sanitizePayload(payload);
-    const staffData = new Staff({ ...sanitizedPayload, staffId, auth: userAuth._id });
+    const staffData = new Staff({
+      ...sanitizedPayload,
+      staffId,
+      auth: userAuth._id,
+    });
 
     // Save the staff data
     const savedStaff = await staffData.save({ session });
@@ -73,12 +87,8 @@ const createStaffIntoDB = async (payload: TStaff) => {
   }
 };
 
-
-
 const getAllStaffFromDB = async (query: Record<string, unknown>) => {
-  const staffQuery = new QueryBuilder(Staff.find(), query)
-    .sort()
-    .paginate();
+  const staffQuery = new QueryBuilder(Staff.find(), query).sort().paginate();
 
   const meta = await staffQuery.countTotal();
   const data = await staffQuery.modelQuery;
@@ -100,7 +110,6 @@ const getSingleStaffDetails = async (id: string) => {
 };
 
 const updateStaffInDB = async (id: string, payload: TStaff) => {
-
   const sanitizeData = sanitizePayload(payload);
 
   const updatedStaff = await Staff.findByIdAndUpdate(id, sanitizeData, {

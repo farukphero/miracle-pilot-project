@@ -1,8 +1,4 @@
-import { Admin } from "./admin.model";
-
- 
-
-
+import { Admin } from './admin.model';
 
 const findLastAdminId = async () => {
   const lastAdmin = await Admin.findOne({ adminId: { $exists: true } })
@@ -10,9 +6,7 @@ const findLastAdminId = async () => {
     .select('adminId')
     .lean();
 
-  return lastAdmin?.adminId
-    ? lastAdmin?.adminId.substring(4)
-    : undefined;
+  return lastAdmin?.adminId ? lastAdmin?.adminId.substring(4) : undefined;
 };
 
 export const generateAdminId = async ({

@@ -2,11 +2,7 @@ import express from 'express';
 
 import validateRequest from '../../middlewares/validateRequest';
 import { userValidations } from './auth.validation';
-
-import authorization from '../../middlewares/authorization';
 import { userAuthController } from './auth.controller';
-import { USER_ROLE } from './auth.const';
-
 
 const router = express.Router();
 
@@ -14,7 +10,8 @@ router
   .route('/register-user')
   .post(
     validateRequest(userValidations.userValidationSchemaForCreateUser),
-    userAuthController.registerUser);
+    userAuthController.registerUser,
+  );
 
 router
   .route('/login')

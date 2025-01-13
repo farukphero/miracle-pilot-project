@@ -1,11 +1,7 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
- 
-import authorization from '../../middlewares/authorization';
-import { USER_ROLE } from '../Auth/auth.const';
 import { adminValidation } from './admin.validation';
 import { adminController } from './admin.controller';
-
 
 const router = express.Router();
 

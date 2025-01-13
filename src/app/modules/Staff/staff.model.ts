@@ -1,9 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import {
-  TExperiences,
-  TOtherQualifications,
-  TStaff,
-} from './staff.interface';
+import { TExperiences, TOtherQualifications, TStaff } from './staff.interface';
 
 // Mongoose Schema
 const OtherQualificationsSchema = new Schema<TOtherQualifications>(
@@ -35,7 +31,7 @@ const StaffSchema = new Schema<TStaff>(
   {
     auth: {
       type: Schema.Types.ObjectId,
-      ref: "Auth"
+      ref: 'Auth',
     },
     userId: { type: String, required: [true, 'User ID is required.'] },
     staffId: { type: String, required: [true, 'Staff ID is required.'] },
@@ -94,7 +90,7 @@ const StaffSchema = new Schema<TStaff>(
 
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     otherQualifications: { type: [OtherQualificationsSchema], required: false },
@@ -104,7 +100,6 @@ const StaffSchema = new Schema<TStaff>(
     timestamps: true,
   },
 );
-
 
 StaffSchema.pre('find', function (next) {
   this.where({ isDeleted: { $ne: true } });

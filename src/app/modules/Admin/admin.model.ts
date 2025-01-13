@@ -1,9 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import {
-  TAdmin,
-  TExperiences,
-  TOtherQualifications,
-} from './admin.interface';
+import { TAdmin, TExperiences, TOtherQualifications } from './admin.interface';
 
 // Mongoose Schema
 const OtherQualificationsSchema = new Schema<TOtherQualifications>(
@@ -35,7 +31,7 @@ const AdminSchema = new Schema<TAdmin>(
   {
     auth: {
       type: Schema.Types.ObjectId,
-      ref: "Auth"
+      ref: 'Auth',
     },
     userId: { type: String, required: [true, 'User ID is required.'] },
     adminId: { type: String, required: [true, 'Admin ID is required.'] },
@@ -94,7 +90,7 @@ const AdminSchema = new Schema<TAdmin>(
 
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     otherQualifications: { type: [OtherQualificationsSchema], required: false },
@@ -104,7 +100,6 @@ const AdminSchema = new Schema<TAdmin>(
     timestamps: true,
   },
 );
-
 
 AdminSchema.pre('find', function (next) {
   this.where({ isDeleted: { $ne: true } });

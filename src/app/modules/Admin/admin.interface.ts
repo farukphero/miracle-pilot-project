@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface TAdmin {
-  auth:Types.ObjectId
+  auth: Types.ObjectId;
   userId: string;
   adminId: string;
   name: string;
@@ -28,7 +28,7 @@ export interface TAdmin {
   passingYear: number;
   result: string;
   boardOrUniversity: string;
-  isDeleted: boolean
+  isDeleted: boolean;
 
   otherQualifications: TOtherQualifications[];
 

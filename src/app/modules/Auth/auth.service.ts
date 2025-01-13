@@ -6,7 +6,6 @@ import { createToken, generateUserId } from './auth.utils';
 import { Auth } from './auth.model';
 
 const registerUserIntoDB = async (payload: TUser) => {
-
   const isEmailValid = (email: string): boolean => {
     const authRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return authRegex.test(email);
@@ -15,16 +14,13 @@ const registerUserIntoDB = async (payload: TUser) => {
   const isAuthEmail = isEmailValid(payload.email);
 
   if (!isAuthEmail) {
-    throw new Error(
-      'Invalid email.',
-    );
+    throw new Error('Invalid email.');
   }
 
   const existingUser = await Auth.findOne({ email: payload.email });
 
   if (existingUser) {
-    throw new AppError(
-      StatusCodes.NOT_FOUND, 'Email already exists.')
+    throw new AppError(StatusCodes.NOT_FOUND, 'Email already exists.');
   }
 
   const newUser = await Auth.create({
@@ -53,11 +49,9 @@ const registerUserIntoDB = async (payload: TUser) => {
     role: newUser.role,
     userId: newUser.userId,
     token: accessToken,
-    refreshToken
+    refreshToken,
   };
 };
-
-
 
 const loginUserWithDB = async (payload: TUser) => {
   const { email, password } = payload;
@@ -73,7 +67,7 @@ const loginUserWithDB = async (payload: TUser) => {
     throw new AppError(StatusCodes.FORBIDDEN, 'This account is deleted!');
   }
 
-  console.log(password)
+  console.log(password);
 
   const isPasswordValid = await existingUser.comparePassword(
     password as string,
@@ -105,10 +99,10 @@ const loginUserWithDB = async (payload: TUser) => {
   return {
     role: existingUser.role,
     token: accessToken,
-    refreshToken
+    refreshToken,
   };
 };
 export const UserAuthServices = {
   registerUserIntoDB,
-  loginUserWithDB
+  loginUserWithDB,
 };

@@ -7,10 +7,17 @@ export type TUser = {
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'teacher' | 'student' | 'staff' | 'account_officer' | 'admin' | 'super_admin';
+  role:
+    | 'user'
+    | 'teacher'
+    | 'student'
+    | 'staff'
+    | 'account_officer'
+    | 'admin'
+    | 'super_admin';
   status: 'active' | 'block';
-  isDeleted: boolean
-  isCompleted: boolean
+  isDeleted: boolean;
+  isCompleted: boolean;
 };
 export type TUserForLogin = {
   auth: string;

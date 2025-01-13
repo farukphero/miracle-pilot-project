@@ -5,8 +5,8 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
   // Extract value within double quotes using regex
   const match = err.message.match(/"([^"]*)"/);
 
-  console.log(err)
-  console.log(match)
+  console.log(err);
+  console.log(match);
 
   // The extracted value will be in the first capturing group
   const extractedMessage = match && match[1];

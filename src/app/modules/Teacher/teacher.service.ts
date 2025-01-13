@@ -23,9 +23,14 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     }
 
     // Check if staff already exists
-    const existingStaff = await Teacher.findOne({ userId: payload.userId }).session(session);
+    const existingStaff = await Teacher.findOne({
+      userId: payload.userId,
+    }).session(session);
     if (existingStaff) {
-      throw new AppError(StatusCodes.CONFLICT, `Teacher already exists with ID ${payload.userId}`);
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        `Teacher already exists with ID ${payload.userId}`,
+      );
     }
 
     // Generate teacher ID
@@ -34,7 +39,9 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     });
 
     // Check if the user is registered in Auth
-    const checkUserAuth = await Auth.findOne({ userId: payload.userId }).session(session);
+    const checkUserAuth = await Auth.findOne({
+      userId: payload.userId,
+    }).session(session);
 
     if (!checkUserAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
@@ -52,14 +59,12 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
             isCompleted: true,
             role: 'teacher',
             password: hashedPassword,
-             userId: ""
+            userId: '',
           },
         },
         { session, new: true }, // Use the session and return the updated document
       );
     }
-
-
 
     // Sanitize the payload
     const sanitizeData = sanitizePayload(payload);
@@ -68,7 +73,7 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     const teacherData = new Teacher({
       ...sanitizeData,
       teacherId,
-      auth: checkUserAuth._id
+      auth: checkUserAuth._id,
     });
 
     const savedTeacher = await teacherData.save({ session });
@@ -85,7 +90,6 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     throw error;
   }
 };
-
 
 const getAllTeacherFromDB = async (query: Record<string, unknown>) => {
   const teacherQuery = new QueryBuilder(Teacher.find(), query)
@@ -112,7 +116,6 @@ const getSingleTeacherDetails = async (id: string) => {
 };
 
 const updateTeacherInDB = async (id: string, payload: TTeacher) => {
-
   const sanitizeData = sanitizePayload(payload);
 
   const updatedTeacher = await Teacher.findByIdAndUpdate(id, sanitizeData, {

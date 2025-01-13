@@ -25,7 +25,6 @@ const getAllStudents = catchAsync(async (req, res) => {
   });
 });
 
-
 const getSingleStudent = catchAsync(async (req, res) => {
   const { id } = req.params;
 

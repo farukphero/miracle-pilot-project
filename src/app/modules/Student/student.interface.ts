@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 // Interface for Academic Result
 export interface TAcademicResult {
@@ -11,9 +11,9 @@ export interface TAcademicResult {
 // Interface for Student
 export interface TStudent {
   auth: {
-    type: Types.ObjectId,
-    ref: 'Auth',
-  },
+    type: Types.ObjectId;
+    ref: 'Auth';
+  };
   userId: string;
   studentId: string;
   name: string;
@@ -61,14 +61,12 @@ export interface TStudent {
   localGuardianImage: string;
   localGuardianNumber: string;
 
-  isDeleted: boolean
+  isDeleted: boolean;
 }
 
-
-
 export interface TMigrationClass {
-  previousClassRoll: string
-  previousClass: string
-  roll?: string
-  class: string
+  previousClassRoll: string;
+  previousClass: string;
+  roll?: string;
+  class: string;
 }

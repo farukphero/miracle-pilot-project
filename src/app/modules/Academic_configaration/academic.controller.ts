@@ -22,7 +22,6 @@ const getAllTeacher = catchAsync(async (req, res) => {
   });
 });
 
-
 const getSingleTeacher = catchAsync(async (req, res) => {
   const { id } = req.params;
 
@@ -35,7 +34,6 @@ const getSingleTeacher = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
 
 const updateTeacher = catchAsync(async (req, res) => {
   const { id } = req.params;

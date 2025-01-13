@@ -10,7 +10,6 @@ import mongoose from 'mongoose';
 import { TAdmin } from './admin.interface';
 import { Admin } from './admin.model';
 import { generateAdminId } from './admin.utils';
- 
 
 const createAdminIntoDB = async (payload: TAdmin) => {
   const session = await mongoose.startSession();
@@ -23,26 +22,34 @@ const createAdminIntoDB = async (payload: TAdmin) => {
     }
 
     // Check if Admin already exists
-    const existingAdmin = await Admin.findOne({ userId: payload.userId }).session(session);
+    const existingAdmin = await Admin.findOne({
+      userId: payload.userId,
+    }).session(session);
     if (existingAdmin) {
-      throw new AppError(StatusCodes.CONFLICT, `Admin already exists with ID ${payload.userId}`);
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        `Admin already exists with ID ${payload.userId}`,
+      );
     }
 
     // Generate Admin ID
     const adminId = await generateAdminId({ joiningDate: payload.joiningDate });
 
     // Verify if the user exists in Auth
-    const userAuth = await Auth.findOne({ userId: payload.userId }).session(session);
+    const userAuth = await Auth.findOne({ userId: payload.userId }).session(
+      session,
+    );
 
-    console.log(userAuth)
-    
     if (!userAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'User is not registered.');
     }
 
     // If no password is set, update the user's credentials
     if (!userAuth.password || userAuth.userId) {
-      const hashedPassword = await bcrypt.hash(adminId, Number(config.bcrypt_salt_rounds));
+      const hashedPassword = await bcrypt.hash(
+        adminId,
+        Number(config.bcrypt_salt_rounds),
+      );
       await Auth.findOneAndUpdate(
         { userId: payload.userId },
         {
@@ -50,16 +57,20 @@ const createAdminIntoDB = async (payload: TAdmin) => {
             isCompleted: true,
             role: 'admin',
             password: hashedPassword,
-            userId: ""
+            userId: '',
           },
         },
-        { session, new: true }
+        { session, new: true },
       );
     }
 
     // Sanitize and prepare the Admin payload
     const sanitizedPayload = sanitizePayload(payload);
-    const adminData = new Admin({ ...sanitizedPayload, adminId, auth: userAuth._id });
+    const adminData = new Admin({
+      ...sanitizedPayload,
+      adminId,
+      auth: userAuth._id,
+    });
 
     // Save the Admin data
     const savedAdmin = await adminData.save({ session });
@@ -77,12 +88,8 @@ const createAdminIntoDB = async (payload: TAdmin) => {
   }
 };
 
-
-
 const getAllAdminFromDB = async (query: Record<string, unknown>) => {
-  const adminQuery = new QueryBuilder(Admin.find(), query)
-    .sort()
-    .paginate();
+  const adminQuery = new QueryBuilder(Admin.find(), query).sort().paginate();
 
   const meta = await adminQuery.countTotal();
   const data = await adminQuery.modelQuery;
@@ -104,7 +111,6 @@ const getSingleAdminDetails = async (id: string) => {
 };
 
 const updateAdminInDB = async (id: string, payload: TAdmin) => {
-
   const sanitizeData = sanitizePayload(payload);
 
   const updatedAdmin = await Admin.findByIdAndUpdate(id, sanitizeData, {

@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface TStaff {
-  auth:Types.ObjectId
+  auth: Types.ObjectId;
   userId: string;
   staffId: string;
   name: string;
@@ -28,7 +28,7 @@ export interface TStaff {
   passingYear: number;
   result: string;
   boardOrUniversity: string;
-  isDeleted: boolean
+  isDeleted: boolean;
 
   otherQualifications: TOtherQualifications[];
 

@@ -3,7 +3,6 @@ import validateRequest from '../../middlewares/validateRequest';
 import { accountOfficerValidation } from './account_officer.validation';
 import { accountOfficerController } from './account_officer.controller';
 
-
 const router = express.Router();
 
 router
@@ -20,7 +19,9 @@ router
   .get(accountOfficerController.getSingleAccountOfficer)
   .put(
     // authorization(USER_ROLE.super_admin),
-    validateRequest(accountOfficerValidation.updateAccountOfficerValidationSchema),
+    validateRequest(
+      accountOfficerValidation.updateAccountOfficerValidationSchema,
+    ),
     accountOfficerController.updateAccountOfficer,
   )
   .delete(accountOfficerController.deleteAccountOfficer);

@@ -2,9 +2,6 @@ import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { staffValidation } from './staff.validation';
 import { StaffController } from './staff.controller';
-import authorization from '../../middlewares/authorization';
-import { USER_ROLE } from '../Auth/auth.const';
-
 
 const router = express.Router();
 

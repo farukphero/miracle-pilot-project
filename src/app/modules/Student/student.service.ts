@@ -18,31 +18,26 @@ const createStudentIntoDB = async (payload: TStudent) => {
     // Check for existing student with the same roll, class, and section
     const existingStudent = await Student.findOne(
       {
-        $and: [
-          { class: payload.class },
-          { roll: payload.roll },
-           
-        ],
+        $and: [{ class: payload.class }, { roll: payload.roll }],
       },
       null,
-      { session }
+      { session },
     );
 
     if (existingStudent) {
       throw new AppError(
         StatusCodes.CONFLICT,
-        'A student with the same roll, class, and section already exists.'
+        'A student with the same roll, class, and section already exists.',
       );
     }
     if (!payload.userId) {
-      throw new AppError(
-        StatusCodes.CONFLICT,
-        'Please add your Id.'
-      );
+      throw new AppError(StatusCodes.CONFLICT, 'Please add your Id.');
     }
 
     // Check if the user is registered in Auth
-    const checkUserAuth = await Auth.findOne({ userId: payload.userId }, null, { session });
+    const checkUserAuth = await Auth.findOne({ userId: payload.userId }, null, {
+      session,
+    });
 
     if (!checkUserAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
@@ -65,7 +60,7 @@ const createStudentIntoDB = async (payload: TStudent) => {
             isCompleted: true,
             role: 'student',
             password: hashedPassword,
-            userId: ""
+            userId: '',
           },
         },
         { session, new: true }, // Use the session and return the updated document
@@ -88,7 +83,6 @@ const createStudentIntoDB = async (payload: TStudent) => {
     throw error;
   }
 };
-
 
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
@@ -116,11 +110,7 @@ const getSingleStudentDetails = async (id: string) => {
 
 const updateStudentInDB = async (id: string, payload: TStudent) => {
   const existingStudent = await Student.findOne({
-    $and: [
-      { class: payload.class },
-      { roll: payload.roll },
-      
-    ],
+    $and: [{ class: payload.class }, { roll: payload.roll }],
     _id: { $ne: id },
   });
 
@@ -145,7 +135,6 @@ const updateStudentInDB = async (id: string, payload: TStudent) => {
   return updatedStudent;
 };
 const migrateClassIntoDB = async (id: string, payload: TMigrationClass) => {
-  
   const existingStudent = await Student.findOne({
     $and: [
       { class: payload.previousClass },
@@ -193,7 +182,6 @@ const deleteStudentFromDB = async (id: string) => {
   // Return the updated student document
   return student;
 };
-
 
 export const StudentServices = {
   createStudentIntoDB,

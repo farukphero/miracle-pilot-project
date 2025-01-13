@@ -1,6 +1,4 @@
-import { Staff } from "./staff.model";
-
- 
+import { Staff } from './staff.model';
 
 const findLastStaffId = async () => {
   const lastStaff = await Staff.findOne({ staffId: { $exists: true } })
@@ -8,9 +6,7 @@ const findLastStaffId = async () => {
     .select('staffId')
     .lean();
 
-  return lastStaff?.staffId
-    ? lastStaff?.staffId.substring(5)
-    : undefined;
+  return lastStaff?.staffId ? lastStaff?.staffId.substring(5) : undefined;
 };
 
 export const generateStaffId = async ({

@@ -1,6 +1,4 @@
-import { Student } from "./student.model";
-
-
+import { Student } from './student.model';
 
 const findLastStudentId = async () => {
   const lastStudent = await Student.findOne({ studentId: { $exists: true } })

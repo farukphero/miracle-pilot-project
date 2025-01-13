@@ -31,8 +31,16 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
 
     role: {
       type: String,
-      enum: ['user', 'teacher', 'student', 'staff', 'account_officer', 'admin', 'super_admin'],
-      default: "user"
+      enum: [
+        'user',
+        'teacher',
+        'student',
+        'staff',
+        'account_officer',
+        'admin',
+        'super_admin',
+      ],
+      default: 'user',
     },
     status: {
       type: String,
@@ -41,13 +49,12 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
     },
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isCompleted: {
       type: Boolean,
-      default: false
-    }
-
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -56,7 +63,6 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
 
 // Ensure the passwords match
 authSchema.pre('save', function (next) {
-
   // Concatenate firstName and lastName into name
   this.name = `${this.firstName} ${this.lastName}`.trim();
 
@@ -77,7 +83,6 @@ authSchema.pre('save', function (next) {
   );
 });
 
-
 authSchema.pre('find', function (next) {
   this.where({ status: { $ne: 'block' } });
   next();
@@ -94,12 +99,13 @@ authSchema.pre('aggregate', function (next) {
 });
 
 // Method to compare passwords
-authSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
+authSchema.methods.comparePassword = async function (
+  password: string,
+): Promise<boolean> {
   const check = await bcrypt.compare(password, this.password);
 
-  return check
+  return check;
 };
-
 
 authSchema.set('toJSON', {
   transform: function (_doc, ret) {

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { TUser } from './auth.interface';
@@ -31,5 +31,5 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
 export const userAuthController = {
   registerUser,
-  loginUser
+  loginUser,
 };

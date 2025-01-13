@@ -38,7 +38,10 @@ const AccountOfficerSchema = new Schema<TAccountOfficer>(
       ref: 'Auth',
     },
     userId: { type: String, required: [true, 'User ID is required.'] },
-    accountOfficerId: { type: String, required: [true, 'Account officer ID is required.'] },
+    accountOfficerId: {
+      type: String,
+      required: [true, 'Account officer ID is required.'],
+    },
     name: { type: String, required: [true, 'Name is required.'] },
     contactNumber: {
       type: String,
@@ -94,7 +97,7 @@ const AccountOfficerSchema = new Schema<TAccountOfficer>(
 
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     otherQualifications: { type: [OtherQualificationsSchema], required: false },
@@ -104,7 +107,6 @@ const AccountOfficerSchema = new Schema<TAccountOfficer>(
     timestamps: true,
   },
 );
-
 
 AccountOfficerSchema.pre('find', function (next) {
   this.where({ isDeleted: { $ne: true } });
@@ -121,7 +123,5 @@ AccountOfficerSchema.pre('aggregate', function (next) {
   next();
 });
 
-export const AccountOfficer: Model<TAccountOfficer> = mongoose.model<TAccountOfficer>(
-  'AccountOfficer',
-  AccountOfficerSchema,
-);
+export const AccountOfficer: Model<TAccountOfficer> =
+  mongoose.model<TAccountOfficer>('AccountOfficer', AccountOfficerSchema);

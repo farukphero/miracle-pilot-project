@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface TTeacher {
-  auth: Types.ObjectId
+  auth: Types.ObjectId;
   userId: string;
   teacherId: string;
   name: string;
@@ -28,7 +28,7 @@ export interface TTeacher {
   passingYear: number;
   result: string;
   boardOrUniversity: string;
-  isDeleted: boolean
+  isDeleted: boolean;
 
   otherQualifications: TOtherQualifications[];
 

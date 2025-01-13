@@ -42,9 +42,7 @@ const userValidationSchemaForLogin = z.object({
   }),
 });
 
-
-
 export const userValidations = {
   userValidationSchemaForCreateUser,
-  userValidationSchemaForLogin
+  userValidationSchemaForLogin,
 };

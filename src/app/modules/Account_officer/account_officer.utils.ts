@@ -1,9 +1,9 @@
-import { AccountOfficer } from "./account_officer.model";
-
- 
+import { AccountOfficer } from './account_officer.model';
 
 const findLastAccountOfficerId = async () => {
-  const lastAccountOfficer = await AccountOfficer.findOne({  accountOfficerId: { $exists: true } })
+  const lastAccountOfficer = await AccountOfficer.findOne({
+    accountOfficerId: { $exists: true },
+  })
     .sort({ createdAt: -1 })
     .select('accountOfficerId')
     .lean();
