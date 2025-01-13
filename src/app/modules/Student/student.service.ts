@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import QueryBuilder from '../../builder/QueryBuilder';
 import sanitizePayload from '../../middlewares/updateDataValidation';
-import { TStudent } from './student.interface';
+import { TMigrationClass, TStudent } from './student.interface';
 import { Student } from './student.model';
 import { Auth } from '../Auth/auth.model';
 import mongoose from 'mongoose';
@@ -21,7 +21,7 @@ const createStudentIntoDB = async (payload: TStudent) => {
         $and: [
           { class: payload.class },
           { roll: payload.roll },
-          { section: payload.section },
+           
         ],
       },
       null,
@@ -119,7 +119,7 @@ const updateStudentInDB = async (id: string, payload: TStudent) => {
     $and: [
       { class: payload.class },
       { roll: payload.roll },
-      { section: payload.section },
+      
     ],
     _id: { $ne: id },
   });
@@ -143,6 +143,36 @@ const updateStudentInDB = async (id: string, payload: TStudent) => {
   }
 
   return updatedStudent;
+};
+const migrateClassIntoDB = async (id: string, payload: TMigrationClass) => {
+  
+  const existingStudent = await Student.findOne({
+    $and: [
+      { class: payload.previousClass },
+      { roll: payload.previousClassRoll },
+    ],
+    _id: { $eq: id },
+  });
+
+  if (!existingStudent) {
+    throw new AppError(
+      StatusCodes.CONFLICT,
+      `No students were found in class ${payload.previousClass}.`,
+    );
+  }
+
+  const sanitizeData = sanitizePayload(payload);
+
+  const migrateStudent = await Student.findByIdAndUpdate(id, sanitizeData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!migrateStudent) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Student not found.');
+  }
+
+  return migrateStudent;
 };
 
 const deleteStudentFromDB = async (id: string) => {
@@ -170,5 +200,6 @@ export const StudentServices = {
   getAllStudentFromDB,
   getSingleStudentDetails,
   updateStudentInDB,
+  migrateClassIntoDB,
   deleteStudentFromDB,
 };

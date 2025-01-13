@@ -63,3 +63,12 @@ export interface TStudent {
 
   isDeleted: boolean
 }
+
+
+
+export interface TMigrationClass {
+  previousClassRoll: string
+  previousClass: string
+  roll?: string
+  class: string
+}

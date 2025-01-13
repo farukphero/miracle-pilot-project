@@ -50,6 +50,17 @@ const updateStudent = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const migrateClass = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await StudentServices.migrateClassIntoDB(id, req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Class migration successful!',
+    data: result,
+  });
+});
 const deleteStudent = catchAsync(async (req, res) => {
   const { id } = req.params;
 
@@ -67,5 +78,6 @@ export const studentController = {
   getAllStudents,
   getSingleStudent,
   updateStudent,
+  migrateClass,
   deleteStudent,
 };
