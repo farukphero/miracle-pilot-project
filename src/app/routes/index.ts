@@ -6,6 +6,7 @@ import { AuthRoutes } from '../modules/Auth/auth.route';
 import { StaffRoutes } from '../modules/Staff/staff.route';
 import { AccountOfficerRoutes } from '../modules/Account_officer/account_officer.route';
 import { AdminRoutes } from '../modules/Admin/admin.route';
+import { ClassRoutineRoutes } from '../modules/Create-class-routine/class-routine.route';
 
 const router = Router();
 
@@ -33,6 +34,10 @@ const moduleRoutes = [
   {
     path: '/account-officer',
     route: AccountOfficerRoutes,
+  },
+  {
+    path: '/class-routine',
+    route: ClassRoutineRoutes,
   },
 ];
 
