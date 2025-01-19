@@ -109,17 +109,17 @@ const getSingleStudentDetails = async (id: string) => {
 };
 
 const updateStudentInDB = async (id: string, payload: TStudent) => {
-  const existingStudent = await Student.findOne({
-    $and: [{ class: payload.class }, { roll: payload.roll }],
-    _id: { $ne: id },
-  });
+  // const existingStudent = await Student.findOne({
+  //   $and: [{ class: payload.class }, { roll: payload.roll }],
+  //   _id: { $ne: id },
+  // });
 
-  if (existingStudent) {
-    throw new AppError(
-      StatusCodes.CONFLICT,
-      'A student with the same roll, class and section already exists.',
-    );
-  }
+  // if (existingStudent) {
+  //   throw new AppError(
+  //     StatusCodes.CONFLICT,
+  //     'A student with the same roll, class and section already exists.',
+  //   );
+  // }
 
   const sanitizeData = sanitizePayload(payload);
 

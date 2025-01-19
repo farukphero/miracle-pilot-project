@@ -55,32 +55,36 @@ const getSingleClassRoutineDetails = async (id: string) => {
 };
 
 const updateClassRoutineInDB = async (id: string, payload: TClassRoutine) => {
-  const existingClassRoutine = await ClassRoutine.findOne({
-    class: payload.class,
-    section: payload.section,
-    teacherName: payload.teacherName,
-    _id: { $ne: id }, // Ensure this class routine is not the one being updated
-  });
+  // const existingClassRoutine = await ClassRoutine.findOne({
+  //   class: payload.class,
+  //   section: payload.section,
+  //   teacherName: payload.teacherName,
+  //   _id: { $ne: id }, // Ensure this class routine is not the one being updated
+  // });
 
-  if (existingClassRoutine) {
-    throw new AppError(
-      StatusCodes.CONFLICT,
-      `Routine already exists with class-${payload.class},section-${payload.section},and teacher-${payload.teacherName}`,
-    );
-  }
+  // if (existingClassRoutine) {
+  //   throw new AppError(
+  //     StatusCodes.CONFLICT,
+  //     `Routine already exists with class-${payload.class},section-${payload.section},and teacher-${payload.teacherName}`,
+  //   );
+  // }
 
   const sanitizeData = sanitizePayload(payload);
 
-  const updatedStaff = await ClassRoutine.findByIdAndUpdate(id, sanitizeData, {
-    new: true,
-    runValidators: true,
-  });
+  const updatedClassRoutine = await ClassRoutine.findByIdAndUpdate(
+    id,
+    sanitizeData,
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 
-  if (!updatedStaff) {
+  if (!updatedClassRoutine) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Class routine not found.');
   }
 
-  return updatedStaff;
+  return updatedClassRoutine;
 };
 
 const deleteClassRoutineFromDB = async (id: string) => {
@@ -89,7 +93,7 @@ const deleteClassRoutineFromDB = async (id: string) => {
 
   // Check if ClassRoutine exists
   if (!classRoutine) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'ClassRoutine not found.');
+    throw new AppError(StatusCodes.NOT_FOUND, 'Class routine not found.');
   }
 
   // Mark the ClassRoutine as deleted

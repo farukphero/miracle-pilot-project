@@ -11,7 +11,7 @@ const timeStringSchema = z.string().refine(
   },
 );
 
-export const classRoutineValidationSchema = z.object({
+const classRoutineValidationSchema = z.object({
   body: z
     .object({
       class: z.string({ required_error: 'Class is required' }),
@@ -51,24 +51,37 @@ export const classRoutineValidationSchema = z.object({
 const updateClassRoutineValidationSchema = z.object({
   body: z
     .object({
-      class: z.string({ required_error: 'Class is required' }),
+      class: z.string({ required_error: 'Class is required' }).optional(),
 
-      section: z.string({ required_error: 'Section is required' }),
+      section: z.string({ required_error: 'Section is required' }).optional(),
 
-      teacherName: z.string({ required_error: 'Teacher name is required' }),
-      subjectCode: z.string({ required_error: 'Subject code is required' }),
-      subjectName: z.string({ required_error: 'Subject name is required' }),
-      day: z.enum([...Days] as [string, ...string[]], {
-        required_error: 'Day is required',
-        invalid_type_error: 'Invalid day',
-      }),
-      startTime: timeStringSchema,
-      endTime: timeStringSchema,
-      roomNumber: z.string({ required_error: 'Room number is required' }),
+      teacherName: z
+        .string({ required_error: 'Teacher name is required' })
+        .optional(),
+      subjectCode: z
+        .string({ required_error: 'Subject code is required' })
+        .optional(),
+      subjectName: z
+        .string({ required_error: 'Subject name is required' })
+        .optional(),
+      day: z
+        .enum([...Days] as [string, ...string[]], {
+          required_error: 'Day is required',
+          invalid_type_error: 'Invalid day',
+        })
+        .optional(),
+      startTime: timeStringSchema.optional(),
+      endTime: timeStringSchema.optional(),
+      roomNumber: z
+        .string({ required_error: 'Room number is required' })
+        .optional(),
       buildingName: z.string().optional(),
-      isOptional: z.boolean({ required_error: 'Optional field is required' }),
-      createdBy: z.string({ required_error: 'Created by field is required' }),
-      isDeleted: z.boolean().default(false),
+      isOptional: z
+        .boolean({ required_error: 'Optional field is required' })
+        .optional(),
+      createdBy: z
+        .string({ required_error: 'Created by field is required' })
+        .optional(),
     })
     .refine(
       (body) => {
