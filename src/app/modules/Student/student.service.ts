@@ -18,7 +18,7 @@ const createStudentIntoDB = async (payload: TStudent) => {
     // Check for existing student with the same roll, class, and section
     const existingStudent = await Student.findOne(
       {
-        $and: [{ class: payload.class }, { roll: payload.roll }],
+        $and: [{ class: payload.class }, { section: payload.section }, { userId: payload.userId }],
       },
       null,
       { session },
@@ -27,7 +27,7 @@ const createStudentIntoDB = async (payload: TStudent) => {
     if (existingStudent) {
       throw new AppError(
         StatusCodes.CONFLICT,
-        'A student with the same roll, class, and section already exists.',
+        `A student with the same userId-${payload.userId}, class, and section already exists.`,
       );
     }
     if (!payload.userId) {
@@ -44,7 +44,7 @@ const createStudentIntoDB = async (payload: TStudent) => {
     }
 
     // Generate a student ID
-    const studentId = await generateStudentId();
+    const studentId = await generateStudentId(payload.admissionDate);
 
     if (!checkUserAuth.password || checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
@@ -84,6 +84,9 @@ const createStudentIntoDB = async (payload: TStudent) => {
   }
 };
 
+
+
+
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
     .sort()
@@ -109,17 +112,21 @@ const getSingleStudentDetails = async (id: string) => {
 };
 
 const updateStudentInDB = async (id: string, payload: TStudent) => {
-  // const existingStudent = await Student.findOne({
-  //   $and: [{ class: payload.class }, { roll: payload.roll }],
-  //   _id: { $ne: id },
-  // });
 
-  // if (existingStudent) {
-  //   throw new AppError(
-  //     StatusCodes.CONFLICT,
-  //     'A student with the same roll, class and section already exists.',
-  //   );
-  // }
+  const existingStudent = await Student.findOne(
+    {
+      $and: [{ class: payload.class }, { section: payload.section }, { userId: payload.userId }],
+      _id: { $ne: id }
+    },
+    null,
+  );
+
+  if (existingStudent) {
+    throw new AppError(
+      StatusCodes.CONFLICT,
+      `A student with the same userId-${payload.userId}, class, and section already exists.`,
+    );
+  }
 
   const sanitizeData = sanitizePayload(payload);
 
@@ -134,6 +141,7 @@ const updateStudentInDB = async (id: string, payload: TStudent) => {
 
   return updatedStudent;
 };
+
 const migrateClassIntoDB = async (id: string, payload: TMigrationClass) => {
   const existingStudent = await Student.findOne({
     $and: [

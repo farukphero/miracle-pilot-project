@@ -1,12 +1,15 @@
 import { Types } from 'mongoose';
 
-// Interface for Academic Result
-export interface TAcademicResult {
+
+export interface TSibling {
+  siblingName: string;
   class: string;
+  section: string;
+  gender: string;
   roll: string;
-  obtainedMarks: number;
-  gpa: number;
+  motherTongue: string;
 }
+
 
 // Interface for Student
 export interface TStudent {
@@ -16,50 +19,76 @@ export interface TStudent {
   };
   userId: string;
   studentId: string;
-  name: string;
-  roll: string;
-  contactNumber: string;
-  email: string;
-  gender: string;
-  religion: string;
-  bloodGroup: string;
-  status: string;
-  picture: string;
-  presentAddress: string;
-  permanentAddress: string;
-  dateOfBirth: string;
+  profileImage: string;
+  academicYear: string;
+  admissionDate: string;
+  status: "Active" | "Inactive";
+  category: string;
+  firstName: string;
+  lastName: string;
   class: string;
   section: string;
+  gender: string;
+  dateOfBirth: string;
+  bloodGroup: string;
+  religion: string;
+  contactNumber: string;
+  email: string;
+  board: string;
+  motherTongue: string;
 
-  // board result info
-  sscBoard: string;
-  sscRoll: string;
-  sscResult: string;
-  hscRoll: string;
-  hscBoard: string;
-  hscResult: string;
-  registrationNumber: string;
-  sscPassingYear: number;
-  hscPassingYear: number;
 
-  academicResult: TAcademicResult[];
+  presentAddress: string;
+  permanentAddress: string;
+
+
+  previousSchoolName: string;
+  previousClassName: string;
+  previousSchoolAddress: string;
+  previousClassGpa: string;
+  siblings: TSibling[]
 
   //  guardian details
 
   fatherName: string;
-  motherName: string;
+  fatherEmail: string;
   fatherContactNumber: string;
-  fatherNidNumber: string;
-  motherNidNumber: string;
-  motherContactNumber: string;
   fatherOccupation: string;
+  fatherNidNumber: string;
+
+
+  motherName: string;
+  motherEmail: string;
+  motherContactNumber: string;
   motherOccupation: string;
-  fatherImage: string;
-  motherImage: string;
+  motherNidNumber: string;
+
+
   localGuardianName: string;
   relationshipWithLocalGuardian: string;
-  localGuardianImage: string;
-  localGuardianNumber: string;
+  localGuardianEmail: string;
+  localGuardianContactNumber: string;
+  localGuardianOccupation: string;
+  localGuardianNidNumber: string;
+
+
+
+  // Transport Information
+
+  route?: string;
+  vehicleNumber?: string;
+  pickupPoint?: string;
+
+  // Hostel Information
+
+  hostelName?: string;
+  roomNumber?: string;
+
+  // Documents
+  transferCertificate: string;
+  birthCertificate: string;
+
+
 
   isDeleted: boolean;
 }

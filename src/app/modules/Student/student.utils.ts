@@ -11,10 +11,16 @@ const findLastStudentId = async () => {
     : undefined;
 };
 
-export const generateStudentId = async () => {
+export const generateStudentId = async (admissionDate: string) => {
+  const admissionYear = new Date(admissionDate).getFullYear().toString().slice(-2);
   const currentYear = new Date().getFullYear().toString().slice(-2);
-  const currentId = (await findLastStudentId()) || '0000';
-  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
-  incrementId = `S-${currentYear}${incrementId}`;
-  return incrementId;
+
+  if (admissionYear !== currentYear) {
+    return `S-${currentYear}0001`;
+  }
+
+  const currentId = await findLastStudentId();
+  const incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+
+  return `S-${currentYear}${incrementId}`;
 };
