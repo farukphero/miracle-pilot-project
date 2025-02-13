@@ -34,9 +34,7 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     }
 
     // Generate teacher ID
-    const teacherId = await generateTeacherId({
-      joiningDate: payload.joiningDate,
-    });
+    const teacherId = await generateTeacherId(payload.joiningDate);
 
     // Check if the user is registered in Auth
     const checkUserAuth = await Auth.findOne({
@@ -90,6 +88,8 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     throw error;
   }
 };
+
+
 
 const getAllTeacherFromDB = async (query: Record<string, unknown>) => {
   const teacherQuery = new QueryBuilder(Teacher.find(), query)

@@ -12,7 +12,7 @@ export type TUser = {
     | 'teacher'
     | 'student'
     | 'staff'
-    | 'account_officer'
+    | 'accountant'
     | 'admin'
     | 'super_admin';
   status: 'active' | 'block';

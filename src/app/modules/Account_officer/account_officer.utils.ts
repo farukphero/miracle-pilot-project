@@ -1,26 +1,30 @@
-import { AccountOfficer } from './account_officer.model';
+import { AccountOfficer } from "./account_officer.model";
 
-const findLastAccountOfficerId = async () => {
-  const lastAccountOfficer = await AccountOfficer.findOne({
-    accountOfficerId: { $exists: true },
+ 
+
+ 
+
+const findLastAccountantIdForYear = async (year: string) => {
+  const lastStaff = await AccountOfficer.findOne({
+    accountantId: new RegExp(`ST-${year}`), // Match IDs starting with T-YY
   })
-    .sort({ createdAt: -1 })
-    .select('accountOfficerId')
+    .sort({ createdAt: -1 }) // Get the most recent Staff for the year
+    .select('accountantId')
     .lean();
 
-  return lastAccountOfficer?.accountOfficerId
-    ? lastAccountOfficer?.accountOfficerId.substring(5)
-    : undefined;
+  return lastStaff?.accountantId ? lastStaff.accountantId.substring(5) : undefined;
 };
 
-export const generateAccountOfficerId = async ({
-  joiningDate,
-}: {
-  joiningDate: string;
-}) => {
-  const year = joiningDate.split('-')[2].slice(-2); // Extracts '24' from '15-12-2024'
-  const currentId = (await findLastAccountOfficerId()) || '0000';
-  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
-  incrementId = `AO-${year}${incrementId}`;
-  return incrementId;
+export const generateAccountantId = async (joiningDate: string) => {
+  const year = joiningDate.split('-')[2].slice(-2); // Extract last two digits of the year
+
+  let currentId = await findLastAccountantIdForYear(year);
+
+  if (!currentId) {
+    // If no Staff exists for the given year, start from '0001'
+    currentId = '0000';
+  }
+
+  const incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+  return `AO-${year}${incrementId}`;
 };

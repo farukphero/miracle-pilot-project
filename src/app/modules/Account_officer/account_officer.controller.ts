@@ -9,7 +9,7 @@ const createAccountOfficer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Account officer created successful!',
+    message: 'Accountant created successful!',
     data: accountOfficer,
   });
 });
@@ -19,7 +19,7 @@ const getAllAccountOfficer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Account officers retrieves successful!',
+    message: 'Accountants retrieves successful!',
     data: accountOfficer,
   });
 });
@@ -33,7 +33,7 @@ const getSingleAccountOfficer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Account officer retrieved successful!',
+    message: 'Accountant retrieved successful!',
     data: result,
   });
 });
@@ -48,7 +48,7 @@ const updateAccountOfficer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Account officer update successful!',
+    message: 'Accountant update successful!',
     data: accountOfficer,
   });
 });
@@ -60,7 +60,7 @@ const deleteAccountOfficer = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Account officer deleted successful!',
+    message: 'Accountant deleted successful!',
     data: accountOfficer,
   });
 });

@@ -33,7 +33,7 @@ const createStaffIntoDB = async (payload: TStaff) => {
     }
 
     // Generate staff ID
-    const staffId = await generateStaffId({ joiningDate: payload.joiningDate });
+    const staffId = await generateStaffId(payload.joiningDate);
 
     // Verify if the user exists in Auth
     const userAuth = await Auth.findOne({ userId: payload.userId }).session(

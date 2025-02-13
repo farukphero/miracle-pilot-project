@@ -36,7 +36,7 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
         'teacher',
         'student',
         'staff',
-        'account_officer',
+        'accountant',
         'admin',
         'super_admin',
       ],

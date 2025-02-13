@@ -13,10 +13,7 @@ export interface TSibling {
 
 // Interface for Student
 export interface TStudent {
-  auth: {
-    type: Types.ObjectId;
-    ref: 'Auth';
-  };
+  auth: Types.ObjectId;
   userId: string;
   studentId: string;
   profileImage: string;

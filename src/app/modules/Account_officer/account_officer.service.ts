@@ -6,9 +6,10 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import sanitizePayload from '../../middlewares/updateDataValidation';
 import { Auth } from '../Auth/auth.model';
 import config from '../../config';
-import { generateAccountOfficerId } from './account_officer.utils';
+
 import { TAccountOfficer } from './account_officer.interface';
 import { AccountOfficer } from './account_officer.model';
+import { generateAccountantId } from './account_officer.utils';
 
 const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
   // Start a new session
@@ -28,14 +29,12 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
     if (existingStaff) {
       throw new AppError(
         StatusCodes.CONFLICT,
-        `Account officer already exists with ID ${payload.userId}`,
+        `Accountant already exists with ID ${payload.userId}`,
       );
     }
 
     // Generate AccountOfficer ID
-    const accountOfficerId = await generateAccountOfficerId({
-      joiningDate: payload.joiningDate,
-    });
+    const accountantId = await generateAccountantId(payload.joiningDate);
 
     // Check if the user is registered in Auth
     const checkUserAuth = await Auth.findOne({
@@ -50,7 +49,7 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
 
     if (!checkUserAuth.password || checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
-        accountOfficerId,
+        accountantId,
         Number(config.bcrypt_salt_rounds),
       );
       await Auth.findOneAndUpdate(
@@ -58,7 +57,7 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
         {
           $set: {
             isCompleted: true,
-            role: 'account_officer',
+            role: 'accountant',
             password: hashedPassword,
             userId: '',
           },
@@ -73,7 +72,7 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
     // Create and save the AccountOfficer
     const AccountOfficerData = new AccountOfficer({
       ...sanitizeData,
-      accountOfficerId,
+      accountantId,
       auth: checkUserAuth._id,
     });
 
@@ -110,7 +109,7 @@ const getSingleAccountOfficerDetails = async (id: string) => {
   const singleAccountOfficer = await AccountOfficer.findById(id);
 
   if (!singleAccountOfficer) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'No account officer found');
+    throw new AppError(StatusCodes.NOT_FOUND, 'No accountant found');
   }
 
   return singleAccountOfficer;
@@ -132,7 +131,7 @@ const updateAccountOfficerInDB = async (
   );
 
   if (!updatedAccountOfficer) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'Account officer not found.');
+    throw new AppError(StatusCodes.NOT_FOUND, 'Accountant not found.');
   }
 
   return updatedAccountOfficer;
@@ -144,7 +143,7 @@ const deleteAccountOfficerFromDB = async (id: string) => {
 
   // Check if account officer exists
   if (!accountOfficer) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'Account officer not found.');
+    throw new AppError(StatusCodes.NOT_FOUND, 'Accountant not found.');
   }
 
   // Mark the account officer as deleted
