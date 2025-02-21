@@ -1,5 +1,4 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { Days } from './exam-schedule.const';
 import { TExaminationSchedule } from './exam-schedule.interface';
 
 const ExaminationScheduleSchema = new Schema<TExaminationSchedule>(

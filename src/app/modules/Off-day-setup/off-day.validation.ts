@@ -25,6 +25,7 @@ const offDaySchema = z.object({
     z.enum([...Days] as [string, ...string[]]), // Enum validation if endDate exists
     z.string(), // Allow any string if endDate is empty
   ]).superRefine((value, ctx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const endDate = (ctx as any).parent?.endDate; // Get endDate from the parent object
     if (endDate && endDate !== "" && !Days.includes(value)) {
       ctx.addIssue({
