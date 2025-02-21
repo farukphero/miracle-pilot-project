@@ -9,6 +9,9 @@ import mongoose from 'mongoose';
 import { generateStudentId } from './student.utils';
 import bcrypt from 'bcrypt';
 import config from '../../config';
+import { studentSearchableFields } from './student.const';
+
+
 
 const createStudentIntoDB = async (payload: TStudent) => {
   const session = await mongoose.startSession();
@@ -85,12 +88,12 @@ const createStudentIntoDB = async (payload: TStudent) => {
 };
 
 
-
-
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
     .sort()
-    .paginate();
+    .paginate()
+    .search(studentSearchableFields)
+    .filter();
 
   const meta = await studentQuery.countTotal();
   const data = await studentQuery.modelQuery;

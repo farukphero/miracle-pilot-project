@@ -8,17 +8,19 @@ import { OffDaySetup } from './off-day.model';
 
 const createOffDaySetupIntoDB = async (payload: TOffDaySetup) => {
   // Check if OffDaySetup already exists
-  const existingOffDaySetup = await OffDaySetup.findOne({
-    dayName: payload.dayName,
-    date: payload.date,
-    title: payload.title,
-  });
+  for (const offDay of payload.offDays) {
+    const existingOffDaySetup = await OffDaySetup.findOne({
+      'offDays.startDate': offDay.startDate,
+      'offDays.startDay': offDay.startDay,
+      'offDays.title': offDay.title,
+    });
 
-  if (existingOffDaySetup) {
-    throw new AppError(
-      StatusCodes.CONFLICT,
-      `An off-day setup already exists for ${payload.dayName} on ${payload.date}. Please choose a different day or date.`,
-    );
+    if (existingOffDaySetup) {
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        `An off-day setup already exists for ${offDay.startDate} on ${offDay.startDay} with the title "${offDay.title}". Please choose a different day or date.`
+      );
+    }
   }
   // Sanitize and prepare the OffDaySetup payload
   const sanitizedPayload = sanitizePayload(payload);
@@ -55,19 +57,22 @@ const getSingleOffDaySetupDetails = async (id: string) => {
 };
 
 const updateOffDaySetupInDB = async (id: string, payload: TOffDaySetup) => {
-  // const existingOffDaySetup = await OffDaySetup.findOne({
-  //   dayName: payload.dayName,
-  //   date: payload.date,
-  //   title: payload.title,
-  //   _id: { $ne: id },
-  // });
+  // Check if any of the new offDays already exist, excluding the current setup
+  for (const offDay of payload.offDays) {
+    const existingOffDaySetup = await OffDaySetup.findOne({
+      _id: { $ne: id }, // Exclude the current document from the check
+      'offDays.startDate': offDay.startDate,
+      'offDays.startDay': offDay.startDay,
+      'offDays.title': offDay.title,
+    });
 
-  // if (existingOffDaySetup) {
-  //   throw new AppError(
-  //     StatusCodes.CONFLICT,
-  //     `An off-day setup already exists for ${payload.dayName} on ${payload.date}. Please choose a different day or date.`,
-  //   );
-  // }
+    if (existingOffDaySetup) {
+      throw new AppError(
+        StatusCodes.CONFLICT,
+        `An off-day setup already exists for ${offDay.startDate} on ${offDay.startDay} with the title "${offDay.title}". Please choose a different day or date.`
+      );
+    }
+  }
   // Ensure this class routine is not the one being updated
 
   const sanitizeData = sanitizePayload(payload);

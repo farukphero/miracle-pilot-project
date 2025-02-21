@@ -4,37 +4,66 @@ import { TExaminationSchedule } from './exam-schedule.interface';
 
 const ExaminationScheduleSchema = new Schema<TExaminationSchedule>(
   {
-    examName: { type: String, required: [true, 'Exam name is required'] },
-    class: { type: String, required: [true, 'Class is required'] },
-    section: { type: String, required: [true, 'Section is required'] },
-    subjectCode: { type: String, required: [true, 'Subject code is required'] },
-    subjectName: { type: String, required: [true, 'Subject name is required'] },
-    examDate: { type: String, required: [true, 'Exam date is required'] },
-    examYear: { type: String, required: [true, 'Exam year is required'] },
-    day: {
+    class: {
       type: String,
-      enum: Days,
-      required: [true, 'Day is required'],
+      required: [true, 'Class name is required'],
     },
-    startTime: { type: String, required: [true, 'Start time is required'] },
-    endTime: { type: String, required: [true, 'End time is required'] },
-    durationMinutes: { type: Number, default: null },
-    roomNumber: { type: String, required: [true, 'Room number is required'] },
-    buildingName: { type: String, default: null },
-    invigilatorName: {
+    examName: {
       type: String,
-      required: [true, 'Invigilator name is required'],
+      required: [true, 'Exam name is required'],
     },
-    totalMarks: { type: Number, required: [true, 'Total marks are required'] },
-    passingMarks: {
-      type: Number,
-      required: [true, 'Passing marks are required'],
+    examYear: {
+      type: String,
+      required: [true, 'Exam year is required'],
     },
+    startDate: {
+      type: String,
+      required: [false, 'Start date is optional'],
+    },
+    endDate: {
+      type: String,
+      required: [false, 'End date is optional'],
+    },
+    description: {
+      type: String,
+      required: [true, 'Description is required'],
+    },
+    exams: [
+      {
+        courseName: {
+          type: String,
+          required: [true, 'Course name is required'],
+        },
+        courseCode: {
+          type: String,
+          required: [true, 'Course code is required'],
+        },
+
+        maxMark: {
+          type: String,
+          required: [true, 'Maximum mark is required'],
+        },
+        startTime: {
+          type: String,
+          required: [true, 'Start time is required'],
+        },
+        endTime: {
+          type: String,
+          required: [true, 'End time is required'],
+        },
+        durationMinutes: {
+          type: String,
+        },
+      },
+    ],
     createdBy: {
       type: String,
-      required: [true, 'Created by field is required'],
+      required: [true, 'Created by is required'],
     },
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

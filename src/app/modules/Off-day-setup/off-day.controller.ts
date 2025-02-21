@@ -10,7 +10,7 @@ const createOffDaySetup = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Off day setup created successful!',
+    message: 'Off day setup successful!',
     data: offDaySetup,
   });
 });
@@ -21,7 +21,7 @@ const getAllOffDaySetup = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Off day setups are retrieves successful!',
+    message: 'Off days are retrieves successful!',
     data: offDaySetup,
   });
 });
@@ -34,7 +34,7 @@ const getSingleOffDaySetup = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Off day setup retrieved successful!',
+    message: 'Off day retrieved successful!',
     data: offDaySetup,
   });
 });
@@ -49,7 +49,7 @@ const updateOffDaySetup = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Off day setup update successful!',
+    message: 'Off day update successful!',
     data: offDaySetup,
   });
 });
@@ -60,7 +60,7 @@ const deleteOffDaySetup = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Off day setup deleted successful!',
+    message: 'Off day deleted successful!',
     data: offDaySetup,
   });
 });

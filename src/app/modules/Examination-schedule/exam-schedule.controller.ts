@@ -9,7 +9,7 @@ const createExaminationSchedule = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Examination schedule created successful!',
+    message: 'Exam schedule created successful!',
     data: examinationSchedule,
   });
 });
@@ -21,7 +21,7 @@ const getAllExaminationSchedule = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Examination schedules are retrieves successful!',
+    message: 'Exam schedules are retrieves successful!',
     data: ExaminationSchedule,
   });
 });
@@ -35,7 +35,7 @@ const getSingleExaminationSchedule = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Examination schedule retrieved successful!',
+    message: 'Exam schedule retrieved successful!',
     data: examinationSchedule,
   });
 });
@@ -51,7 +51,7 @@ const updateExaminationSchedule = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Examination schedule update successful!',
+    message: 'Exam schedule update successful!',
     data: examinationSchedule,
   });
 });
@@ -63,7 +63,7 @@ const deleteExaminationSchedule = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Examination schedule deleted successful!',
+    message: 'Exam schedule deleted successful!',
     data: examinationSchedule,
   });
 });

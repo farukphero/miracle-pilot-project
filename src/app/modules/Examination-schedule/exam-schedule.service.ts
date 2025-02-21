@@ -5,35 +5,51 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import sanitizePayload from '../../middlewares/updateDataValidation';
 import { TExaminationSchedule } from './exam-schedule.interface';
 import { ExaminationSchedule } from './exam-schedule.model';
+import moment from 'moment';
 
-const createExaminationScheduleIntoDB = async (
-  payload: TExaminationSchedule,
-) => {
-  // Check if ExaminationSchedule already exists
-  const existingExaminationSchedule = await ExaminationSchedule.findOne({
-    examName: payload.examName,
+const createExaminationScheduleIntoDB = async (payload: TExaminationSchedule) => {
+  // Check if ExamSetting already exists
+
+  const existingExamSetting = await ExaminationSchedule.findOne({
     class: payload.class,
-    section: payload.section,
-    examDate: payload.examDate,
+    examName: payload.examName,
     examYear: payload.examYear,
   });
 
-  if (existingExaminationSchedule) {
+  if (existingExamSetting) {
     throw new AppError(
       StatusCodes.CONFLICT,
-      `Exam schedule already exists with exam name-${payload.examName} class-${payload.class},section-${payload.section},and exam date-${payload.examDate}`,
+      `An exam result already exists for ${payload.class} on ${payload.examName}.`
     );
   }
-  // Sanitize and prepare the ExaminationSchedule payload
-  const sanitizedPayload = sanitizePayload(payload);
-  const ExaminationScheduleData = new ExaminationSchedule({
-    ...sanitizedPayload,
+
+  // Calculate durationMinutes based on startTime and endTime
+  const updatedExams = payload.exams.map((exam) => {
+    if (exam.startTime && exam.endTime) {
+      const start = moment(exam.startTime, "HH:mm"); // Parse as 24-hour format
+      const end = moment(exam.endTime, "HH:mm");
+      const durationMinutes = end.diff(start, "minutes");
+
+      if (durationMinutes <= 0) {
+        throw new AppError(
+          StatusCodes.BAD_REQUEST,
+          `End time must be after start time for ${exam.courseName}.`
+        );
+      }
+
+      return { ...exam, durationMinutes: durationMinutes.toString() };
+    }
+    return exam;
   });
 
-  // Save the ExaminationSchedule data
-  const savedExaminationSchedule = await ExaminationScheduleData.save();
+  // Sanitize and prepare the ExamSetting payload
+  const sanitizedPayload = sanitizePayload({ ...payload, exams: updatedExams });
+  const examSettingData = new ExaminationSchedule({ ...sanitizedPayload });
 
-  return savedExaminationSchedule;
+  // Save the ExamSetting data
+  const savedExamSetting = await examSettingData.save();
+
+  return savedExamSetting;
 };
 
 const getAllExaminationSchedulesFromDB = async (
@@ -69,23 +85,25 @@ const updateExaminationScheduleInDB = async (
   id: string,
   payload: TExaminationSchedule,
 ) => {
-  // const existingExaminationSchedule = await ExaminationSchedule.findOne({
-  //   examName: payload.examName,
-  //   class: payload.class,
-  //   section: payload.section,
-  //   examDate: payload.examDate,
-  //   examYear: payload.examYear,
-  //   _id: { $ne: id }, // Ensure this class routine is not the one being updated
-  // });
+  const updatedExams = payload.exams.map((exam) => {
+    if (exam.startTime && exam.endTime) {
+      const start = moment(exam.startTime, "HH:mm"); // Parse as 24-hour format
+      const end = moment(exam.endTime, "HH:mm");
+      const durationMinutes = end.diff(start, "minutes");
 
-  // if (existingExaminationSchedule) {
-  //   throw new AppError(
-  //     StatusCodes.CONFLICT,
-  //     `Exam schedule already exists with exam name-${payload.examName} class-${payload.class},section-${payload.section},and exam date-${payload.examDate}`,
-  //   );
-  // }
+      if (durationMinutes <= 0) {
+        throw new AppError(
+          StatusCodes.BAD_REQUEST,
+          `End time must be after start time for ${exam.courseName}.`
+        );
+      }
 
-  const sanitizeData = sanitizePayload(payload);
+      return { ...exam, durationMinutes: durationMinutes.toString() };
+    }
+    return exam;
+  });
+
+  const sanitizeData = sanitizePayload({ ...payload, exams: updatedExams });
 
   const updatedExaminationSchedule =
     await ExaminationSchedule.findByIdAndUpdate(id, sanitizeData, {
@@ -96,7 +114,7 @@ const updateExaminationScheduleInDB = async (
   if (!updatedExaminationSchedule) {
     throw new AppError(
       StatusCodes.NOT_FOUND,
-      'Examination schedule not found.',
+      'Exam schedule not found.',
     );
   }
 
@@ -111,7 +129,7 @@ const deleteExaminationScheduleFromDB = async (id: string) => {
   if (!examinationSchedule) {
     throw new AppError(
       StatusCodes.NOT_FOUND,
-      'Examination schedule not found.',
+      'Exam schedule not found.',
     );
   }
 

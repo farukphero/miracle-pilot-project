@@ -1,7 +1,8 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
-import { examinationScheduleValidation } from './exam-schedule.validation';
+ 
 import { ExaminationScheduleController } from './exam-schedule.controller';
+import { examScheduleValidation } from './exam-schedule.validation';
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router
   .post(
     // authorization(USER_ROLE.super_admin, USER_ROLE.admin),
     validateRequest(
-      examinationScheduleValidation.examinationScheduleValidationSchema,
+      examScheduleValidation.examScheduleValidationSchema,
     ),
     ExaminationScheduleController.createExaminationSchedule,
   )
@@ -22,7 +23,7 @@ router
   .put(
     // authorization(USER_ROLE.super_admin),
     validateRequest(
-      examinationScheduleValidation.updateExaminationScheduleValidationSchema,
+      examScheduleValidation.updateExamScheduleValidationSchema,
     ),
     ExaminationScheduleController.updateExaminationSchedule,
   )

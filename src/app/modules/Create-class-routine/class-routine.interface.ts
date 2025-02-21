@@ -8,11 +8,11 @@ export type TDays =
   | 'Sunday';
 
 export interface TClassRoutine {
+  teacherName: string;
+  subjectName: string;
+  subjectCode: string;
   class: string;
   section: string;
-  teacherName: string;
-  subjectCode: string;
-  subjectName: string;
   day: TDays;
   startTime: string; // Format: "HH:mm" or "10:00 AM"
   endTime: string; // Format: "HH:mm" or "11:00 AM"
