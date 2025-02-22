@@ -13,12 +13,13 @@ interface TOffDays {
   endDay?: TDays; // Name of the off day or occasion, e.g., "Teacher's Day" or "National Holiday"
   startDate: string; // Date of the off day in the format "DD-MM-YYYY"
   endDate?: string; // Date of the off day in the format "DD-MM-YYYY"
-  createdBy: string; // User or admin ID who created the off day setup
-   // Optional: Flag for soft deletion
+  // User or admin ID who created the off day setup
+  // Optional: Flag for soft deletion
 }
 
 
 export interface TOffDaySetup {
   offDays: TOffDays[]
+  createdBy: string;
   isDeleted: boolean;
 }

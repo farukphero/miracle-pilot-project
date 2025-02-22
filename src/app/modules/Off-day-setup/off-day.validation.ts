@@ -37,9 +37,7 @@ const offDaySchema = z.object({
   description: z
     .string({ required_error: 'Reason for the off day is required' })
     .min(1, { message: 'Description cannot be empty' }),
-  createdBy: z
-    .string({ required_error: 'Created by is required' })
-    .min(1, { message: 'Created by field cannot be empty' }),
+
 });
 
 
@@ -49,6 +47,9 @@ const offDaySchema = z.object({
 const offDaySetupValidationSchema = z.object({
   body: z.object({
     offDays: z.array(offDaySchema).min(1, { message: 'At least one off day is required' }),
+    createdBy: z
+      .string({ required_error: 'Created by is required' })
+      .min(1, { message: 'Created by field cannot be empty' }),
   }),
 });
 
@@ -58,6 +59,9 @@ const updateOffDaySetupValidationSchema = z.object({
       .array(offDaySchema.partial()) // Partial allows updating only specific fields
       .min(1, { message: 'At least one off day is required' })
       .optional(),
+    createdBy: z
+      .string({ required_error: 'Created by is required' })
+      .min(1, { message: 'Created by field cannot be empty' }).optional(),
   }),
 });
 

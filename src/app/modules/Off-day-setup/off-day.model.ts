@@ -29,10 +29,7 @@ const OffDaySchema = new Schema(
       type: String,
     },
 
-    createdBy: {
-      type: String,
-      required: [true, 'Created by is required'],
-    },
+
 
   },
   {
@@ -43,10 +40,15 @@ const OffDaySchema = new Schema(
 const OffDaySetupSchema = new Schema<TOffDaySetup>(
   {
     offDays: [OffDaySchema], // Array of off days
+    createdBy: {
+      type: String,
+      required: [true, 'Created by is required'],
+    },
     isDeleted: {
       type: Boolean,
       default: false,
     },
+
   },
   { timestamps: true }
 );
