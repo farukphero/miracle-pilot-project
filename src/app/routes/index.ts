@@ -10,6 +10,7 @@ import { ClassRoutineRoutes } from '../modules/Create-class-routine/class-routin
 import { ExaminationScheduleRoutes } from '../modules/Examination-schedule/exam-schedule.route';
 import { OffDaySetupRoutes } from '../modules/Off-day-setup/off-day.route';
 import { ExamSettingRoutes } from '../modules/Exam-setting/exam-setting.route';
+import { AttendanceRoutes } from '../modules/Attendance/attendance.route';
 
 const router = Router();
 
@@ -53,6 +54,10 @@ const moduleRoutes = [
   {
     path: '/exam-setting',
     route: ExamSettingRoutes,
+  },
+  {
+    path: '/attendance',
+    route: AttendanceRoutes,
   },
 ];
 
