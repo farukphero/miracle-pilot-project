@@ -5,7 +5,7 @@ const isEmailValid = (auth: string): boolean => {
   return emailRegex.test(auth);
 };
 
-const userValidationSchemaForCreateUser = z.object({
+const userAuthValidationSchemaForCreateUser = z.object({
   body: z.object({
     firstName: z.string({
       required_error: 'First name is required',
@@ -29,7 +29,7 @@ const userValidationSchemaForCreateUser = z.object({
       }),
   }),
 });
-const userValidationSchemaForLogin = z.object({
+const userAuthValidationSchemaForLogin = z.object({
   body: z.object({
     email: z
       .string({ required_error: 'Email is required' })
@@ -42,7 +42,17 @@ const userValidationSchemaForLogin = z.object({
   }),
 });
 
-export const userValidations = {
-  userValidationSchemaForCreateUser,
-  userValidationSchemaForLogin,
+
+
+const refreshTokenValidationSchema = z.object({
+  cookies: z.object({
+    refreshToken: z.string({
+      required_error: 'Refresh token is required!',
+    }),
+  }),
+});
+export const AuthValidation = {
+  userAuthValidationSchemaForCreateUser,
+  userAuthValidationSchemaForLogin,
+  refreshTokenValidationSchema
 };

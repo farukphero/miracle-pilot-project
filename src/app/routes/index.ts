@@ -1,16 +1,19 @@
 import { Router } from 'express';
 
-import { StudentRoutes } from '../modules/Student/student.route';
-import { TeacherRoutes } from '../modules/Teacher/teacher.route';
-import { AuthRoutes } from '../modules/Auth/auth.route';
-import { StaffRoutes } from '../modules/Staff/staff.route';
 import { AccountOfficerRoutes } from '../modules/Account_officer/account_officer.route';
 import { AdminRoutes } from '../modules/Admin/admin.route';
+import { AuthRoutes } from '../modules/Auth/auth.route';
 import { ClassRoutineRoutes } from '../modules/Create-class-routine/class-routine.route';
+import { ExamSettingRoutes } from '../modules/Exam-setting/exam-setting.route';
 import { ExaminationScheduleRoutes } from '../modules/Examination-schedule/exam-schedule.route';
 import { OffDaySetupRoutes } from '../modules/Off-day-setup/off-day.route';
-import { ExamSettingRoutes } from '../modules/Exam-setting/exam-setting.route';
+import { SalaryRoutes } from '../modules/Salary/salary.route';
+import { StaffRoutes } from '../modules/Staff/staff.route';
+import { StudentRoutes } from '../modules/Student/student.route';
+import { TeacherRoutes } from '../modules/Teacher/teacher.route';
+import { TransactionRoutes } from '../modules/Transaction/transaction.route';
 import { AttendanceRoutes } from '../modules/Attendance/attendance.route';
+
 
 const router = Router();
 
@@ -56,8 +59,18 @@ const moduleRoutes = [
     route: ExamSettingRoutes,
   },
   {
+
     path: '/attendance',
     route: AttendanceRoutes,
+  },
+  {
+    path: '/salary',
+    route: SalaryRoutes,
+  },
+  {
+    path: '/transaction',
+    route: TransactionRoutes,
+
   },
 ];
 

@@ -4,6 +4,8 @@ import config from '../../config';
 import { TUser } from './auth.interface';
 import { createToken, generateUserId } from './auth.utils';
 import { Auth } from './auth.model';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Response } from "express";
 
 const registerUserIntoDB = async (payload: TUser) => {
   const isEmailValid = (email: string): boolean => {
@@ -67,13 +69,11 @@ const loginUserWithDB = async (payload: TUser) => {
     throw new AppError(StatusCodes.FORBIDDEN, 'This account is deleted!');
   }
 
-  console.log(password);
 
   const isPasswordValid = await existingUser.comparePassword(
     password as string,
   );
 
-  console.log('Password match status:', isPasswordValid);
 
   if (!isPasswordValid) {
     throw new Error('Invalid password!');
@@ -102,7 +102,76 @@ const loginUserWithDB = async (payload: TUser) => {
     refreshToken,
   };
 };
+
+
+const refreshToken = async (token: string) => {
+  // checking if the given token is valid
+  const decoded = jwt.verify(
+    token,
+    config.jwt_refresh_secret as string,
+  ) as JwtPayload;
+
+  const { email, iat } = decoded;
+
+  // checking if the user is exist
+  const existingUser = await Auth.isUserExistsByCustomId(email);
+
+  if (!existingUser) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found.');
+  }
+  // checking if the user is already deleted
+  const isDeleted = existingUser?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'This user is deleted!');
+  }
+
+  // checking if the user is blocked
+  const userStatus = existingUser?.status;
+
+  if (userStatus === 'block') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'This user is blocked !');
+  }
+
+  if (
+    existingUser.passwordChangedAt &&
+    Auth.isJWTIssuedBeforePasswordChanged(existingUser.passwordChangedAt, iat as number)
+  ) {
+    throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized !');
+  }
+
+  const jwtPayload = {
+    email: existingUser.email,
+    role: existingUser.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string,
+  );
+
+  return {
+    token: accessToken,
+  };
+};
+
+
+
+const logout = async (res: Response) => {
+  // Clear refreshToken cookie
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  return { message: "Logged out successfully" };
+}
+
 export const UserAuthServices = {
   registerUserIntoDB,
   loginUserWithDB,
+  refreshToken,
+  logout
 };

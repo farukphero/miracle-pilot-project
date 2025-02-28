@@ -1,3 +1,4 @@
+import { Model } from 'mongoose';
 import { USER_ROLE } from './auth.const';
 
 export type TUser = {
@@ -7,14 +8,15 @@ export type TUser = {
   name: string;
   email: string;
   password: string;
+  passwordChangedAt?: Date;
   role:
-    | 'user'
-    | 'teacher'
-    | 'student'
-    | 'staff'
-    | 'accountant'
-    | 'admin'
-    | 'super_admin';
+  | 'user'
+  | 'teacher'
+  | 'student'
+  | 'staff'
+  | 'accountant'
+  | 'admin'
+  | 'super_admin';
   status: 'active' | 'block';
   isDeleted: boolean;
   isCompleted: boolean;
@@ -28,6 +30,23 @@ export type TUserExtends = Document &
   TUser & {
     comparePassword(candidatePassword: string): Promise<boolean>;
   };
+
+
+  export interface UserModel extends Model<TUserExtends> {
+    isUserExistsByCustomId(email: string): Promise<TUser | null>;
+    isJWTIssuedBeforePasswordChanged(
+      passwordChangedTimestamp: Date,
+      jwtIssuedTimestamp: number,
+    ): boolean;
+  }
+
+
+
+// export interface UserModel extends Model<TUser> {
+//   //instance methods for checking if passwords are matched
+
+// }
+
 
 export type TUserRole = keyof typeof USER_ROLE;
 

@@ -3,17 +3,19 @@ import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { studentController } from './student.controller';
 import { studentValidation } from './student.validation';
+import authorization from '../../middlewares/authorization';
+import { USER_ROLE } from '../Auth/auth.const';
 
 const router = express.Router();
 
 router
   .route('/')
   .post(
-    // authorization(USER_ROLE.super_admin),
+    authorization(USER_ROLE.super_admin),
     validateRequest(studentValidation.studentValidationSchema),
     studentController.createStudent,
   )
-  .get(studentController.getAllStudents);
+  .get(authorization(USER_ROLE.super_admin), studentController.getAllStudents);
 
 router
   .route('/:id')

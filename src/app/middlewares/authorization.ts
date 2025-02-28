@@ -16,17 +16,23 @@ const authorization = (...requiredRoles: TUserRole[]) => {
     if (!token) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
     }
-
     // checking if the given token is valid
-    const decoded = jwt.verify(
-      token,
-      config.jwt_access_secret as string,
-    ) as JwtPayload;
+    let decoded
 
-    const { role, email } = decoded;
+    try {
+      decoded = jwt.verify(
+        token,
+        config.jwt_access_secret as string,
+      ) as JwtPayload;
+    } catch (error) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
+    }
+
+    const { role, email, iat } = decoded;
 
     // checking if the user is exist
-    const user = await Auth.findOne({ email });
+    // const user = await Auth.findOne({ email });
+    const user = await Auth.isUserExistsByCustomId(email);
 
     if (!user) {
       throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found !');
@@ -44,10 +50,20 @@ const authorization = (...requiredRoles: TUserRole[]) => {
       throw new AppError(StatusCodes.FORBIDDEN, 'This user is blocked ! !');
     }
 
+    if (
+      user.passwordChangedAt &&
+      Auth.isJWTIssuedBeforePasswordChanged(
+        user.passwordChangedAt,
+        iat as number,
+      )
+    ) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized !');
+    }
+
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(
         StatusCodes.UNAUTHORIZED,
-        'You are not authorized  hi!',
+        'You are not authorized!',
       );
     }
 
