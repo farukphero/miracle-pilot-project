@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
+import { ObjectId, Types } from 'mongoose';
+import { Type } from 'typescript';
 
- 
+
 
 export const generateUserId = async () => {
   const currentYear = new Date().getFullYear().toString().slice(-2);
@@ -13,7 +15,7 @@ export const generateUserId = async () => {
 };
 
 export const createToken = (
-  jwtPayload: { email: string; role: string },
+  jwtPayload: { email: string; role: string, id?: Types.ObjectId },
   secret: string,
   expiresIn: string,
 ) => {

@@ -31,6 +31,7 @@ const registerUserIntoDB = async (payload: TUser) => {
   });
 
   const jwtPayload = {
+    id: newUser._id,
     email: newUser.email,
     role: newUser.role,
   };
@@ -48,6 +49,7 @@ const registerUserIntoDB = async (payload: TUser) => {
   );
 
   return {
+    id: newUser._id,
     role: newUser.role,
     userId: newUser.userId,
     token: accessToken,
@@ -80,6 +82,7 @@ const loginUserWithDB = async (payload: TUser) => {
   }
 
   const jwtPayload = {
+    id: existingUser._id,
     email: existingUser.email,
     role: existingUser.role,
   };

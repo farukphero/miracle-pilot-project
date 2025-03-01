@@ -11,7 +11,7 @@ const router = express.Router();
 router
   .route('/')
   .post(
-    authorization(USER_ROLE.super_admin),
+    authorization(USER_ROLE.super_admin, USER_ROLE.student),
     validateRequest(studentValidation.studentValidationSchema),
     studentController.createStudent,
   )
