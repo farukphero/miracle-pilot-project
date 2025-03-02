@@ -12,6 +12,8 @@ import { StaffRoutes } from '../modules/Staff/staff.route';
 import { StudentRoutes } from '../modules/Student/student.route';
 import { TeacherRoutes } from '../modules/Teacher/teacher.route';
 import { TransactionRoutes } from '../modules/Transaction/transaction.route';
+import { AttendanceRoutes } from '../modules/Attendance/attendance.route';
+
 
 const router = Router();
 
@@ -57,12 +59,18 @@ const moduleRoutes = [
     route: ExamSettingRoutes,
   },
   {
+
+    path: '/attendance',
+    route: AttendanceRoutes,
+  },
+  {
     path: '/salary',
     route: SalaryRoutes,
   },
   {
     path: '/transaction',
     route: TransactionRoutes,
+
   },
 ];
 

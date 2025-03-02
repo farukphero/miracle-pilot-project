@@ -5,7 +5,7 @@ import sanitizePayload from '../../middlewares/updateDataValidation';
 import { TMigrationClass, TStudent } from './student.interface';
 import { Student } from './student.model';
 import { Auth } from '../Auth/auth.model';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { generateStudentId } from './student.utils';
 import bcrypt from 'bcrypt';
 import config from '../../config';
@@ -21,11 +21,19 @@ const createStudentIntoDB = async (payload: TStudent) => {
     // Check for existing student with the same roll, class, and section
     const existingStudent = await Student.findOne(
       {
-        $and: [{ class: payload.class }, { section: payload.section }, { userId: payload.userId }],
+        $and: [
+          { class: payload.class },
+          { section: payload.section },
+          { userId: payload.userId }
+        ],
+        $or: [
+          { email: payload.email } // This checks email independently
+        ]
       },
       null,
-      { session },
+      { session }
     );
+
 
     if (existingStudent) {
       throw new AppError(
@@ -104,8 +112,30 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-const getSingleStudentDetails = async (id: string) => {
-  const singleStudent = await Student.findById(id);
+// const getSingleStudentDetails = async (id: string) => {
+//   const singleStudent = await Student.findById(id);
+
+//   if (!singleStudent) {
+//     throw new AppError(StatusCodes.NOT_FOUND, 'No student found');
+//   }
+
+//   return singleStudent;
+// };
+
+const getSingleStudentDetails = async (identifier: string) => {
+  // Check if the identifier is a valid ObjectId, and search by _id
+  let query = {};
+  if (Types.ObjectId.isValid(identifier)) {
+    query = { _id: identifier };
+  } else {
+    query = { email: identifier };  // If it's not a valid ObjectId, search by email
+  }
+
+  // Find student by either _id or email
+  const singleStudent = await Student.findOne(query);
+
+  console.log(identifier);
+  console.log(singleStudent);
 
   if (!singleStudent) {
     throw new AppError(StatusCodes.NOT_FOUND, 'No student found');
@@ -114,11 +144,15 @@ const getSingleStudentDetails = async (id: string) => {
   return singleStudent;
 };
 
+
+
 const updateStudentInDB = async (id: string, payload: TStudent) => {
 
   const existingStudent = await Student.findOne(
     {
-      $and: [{ class: payload.class }, { section: payload.section }, { userId: payload.userId }],
+      $and: [{ class: payload.class }, { section: payload.section }, { userId: payload.userId }], $or: [
+        { email: payload.email } // This checks email independently
+      ],
       _id: { $ne: id }
     },
     null,

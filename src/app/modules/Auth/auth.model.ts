@@ -1,7 +1,7 @@
 import mongoose, { Schema, Model, Error } from 'mongoose';
 import bcrypt from 'bcrypt';
 import config from '../../config';
-import { TUserExtends } from './auth.interface';
+import { TUserExtends, UserModel } from './auth.interface';
 
 const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
   {
@@ -28,7 +28,9 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
       type: String,
       trim: true,
     },
-
+    passwordChangedAt: {
+      type: Date,
+    },
     role: {
       type: String,
       enum: [
@@ -114,7 +116,20 @@ authSchema.set('toJSON', {
   },
 });
 
-export const Auth: Model<TUserExtends> = mongoose.model<TUserExtends>(
+authSchema.statics.isUserExistsByCustomId = async function (email: string) {
+  return await Auth.findOne({ email }).select('+password');
+};
+
+authSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimestamp: number,
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+  return passwordChangedTime > jwtIssuedTimestamp;
+};
+
+export const Auth: UserModel = mongoose.model<TUserExtends, UserModel>(
   'Auth',
   authSchema,
 );
