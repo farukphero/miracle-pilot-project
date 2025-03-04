@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { ObjectId, Types } from 'mongoose';
-import { Type } from 'typescript';
+import { Types } from 'mongoose';
+
 
 
 
