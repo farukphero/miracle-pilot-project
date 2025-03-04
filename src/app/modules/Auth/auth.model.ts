@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Error } from 'mongoose';
+import mongoose, { Schema, Error } from 'mongoose';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 import { TUserExtends, UserModel } from './auth.interface';
