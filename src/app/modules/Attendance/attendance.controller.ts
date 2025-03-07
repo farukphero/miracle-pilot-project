@@ -5,6 +5,7 @@ import { AttendanceServices } from './attendance.service';
 
 const createAttendance = catchAsync(async (req, res) => {
   const result = await AttendanceServices.createAttendanceIntoDB(req.body);
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,

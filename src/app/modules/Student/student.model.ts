@@ -25,6 +25,12 @@ const StudentSchema: Schema<TStudent> = new Schema(
       ref: 'Auth',
       required: true,
     },
+    attendance: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Attendance',
+      },
+    ],
     userId: { type: String, required: [true, 'User ID is required'] },
     studentId: { type: String, required: [true, 'Student ID is required'], trim: true },
     profileImage: { type: String, required: [true, 'Profile image is required'] },

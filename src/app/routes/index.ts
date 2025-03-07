@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import { AccountOfficerRoutes } from '../modules/Account_officer/account_officer.route';
 import { AdminRoutes } from '../modules/Admin/admin.route';
 import { AuthRoutes } from '../modules/Auth/auth.route';
@@ -70,6 +69,11 @@ const moduleRoutes = [
   {
     path: '/transaction',
     route: TransactionRoutes,
+
+  },
+  {
+    path: '/attendance',
+    route: AttendanceRoutes,
 
   },
 ];

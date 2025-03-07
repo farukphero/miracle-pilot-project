@@ -1,61 +1,84 @@
 import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import { TAttendance } from './attendance.interface';
-import { Attendance } from './attendance.model';
-
 import mongoose from 'mongoose';
 import { Student } from '../Student/student.model';
+import { Teacher } from '../Teacher/teacher.model';
+import { Staff } from '../Staff/staff.model';
+import { AccountOfficer } from '../Account_officer/account_officer.model';
+import { Attendance } from './attendance.model';
+ 
 
 const createAttendanceIntoDB = async (payload: TAttendance[]) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const attendanceIds = payload.map((entry) => entry.employee);
+    for (const data of payload) {
+      const { user } = data;
 
-    for (const id of attendanceIds) {
-      const data = payload.find((d) => d.employee === id);
+      // Determine the correct model based on user.role
+      let existingUser;
+      switch (user.role) {
+        case 'student':
+          existingUser = await Student.findById(user.id).session(session);
+          break;
+        case 'teacher':
+          existingUser = await Teacher.findById(user.id).session(session);
+          break;
+        case 'staff':
+          existingUser = await Staff.findById(user.id).session(session);
+          break;
+        case 'accountant':
+          existingUser = await AccountOfficer.findById(user.id).session(session);
+          break;
+        default:
+          throw new Error(`Invalid user role: ${user.role}`);
+      }
 
-      const existingEmployee = await Student.findById(id).session(session);
+      if (!existingUser) {
+        throw new Error(`User with role ${user.role} and ID ${user.id} not found.`);
+      }
 
-      if (existingEmployee && data) {
-        const checkTodaysAttendance = await Attendance.findOneAndUpdate(
-          {
-            employee: id,
-            date: data.date,
+      // Check if attendance for the day exists
+      const checkTodaysAttendance = await Attendance.findOne({
+        'user.id': user.id,
+        date: data.date,
+      }).session(session);
+
+      if (!checkTodaysAttendance) {
+        // Create new attendance entry
+        const attendance = new Attendance({
+          ...data,
+          user: {
+            id: existingUser._id,
+            role: user.role,
           },
-          {
-            $set: data,
-          },
-          { session, new: true, runValidators: true },
+        });
+
+        // Save attendance and update the corresponding user model
+        await attendance.save({ session });
+
+        // Update the corresponding user model with the new attendance entry
+        await existingUser.updateOne(
+          { $push: { attendance: attendance._id } },
+          { new: true, runValidators: true, session }
         );
-
-        if (!checkTodaysAttendance) {
-          const attendance = new Attendance({
-            ...data,
-            employee: existingEmployee._id,
-          });
-
-          await attendance.save({ session });
-
-          await Student.findByIdAndUpdate(
-            existingEmployee._id,
-            { $push: { attendance: attendance._id } },
-            { new: true, runValidators: true, session },
-          );
-        }
       }
     }
 
     await session.commitTransaction();
-    session.endSession();
-    return null;
   } catch (error) {
     await session.abortTransaction();
-    session.endSession();
     throw error;
+  } finally {
+    session.endSession();
   }
+
+  return null;
 };
+
+
 
 const getTodayAttendanceFromDB = async () => {
   const parsedDate = new Date();
@@ -261,29 +284,29 @@ const getSingleDateAttendance = async (date: string) => {
 };
 
 const deleteAttendanceFromDB = async (date: { date: string }) => {
-  const existingAttendance = await Attendance.find({ date: date.date });
+  // const existingAttendance = await Attendance.find({ date: date.date });
 
-  const attendanceIds = existingAttendance.map((entry) => entry._id);
+  // const attendanceIds = existingAttendance.map((entry) => entry._id);
 
-  attendanceIds.forEach(async (id) => {
-    const data = existingAttendance.find((d) => d._id === id);
+  // attendanceIds.forEach(async (id) => {
+  //   const data = existingAttendance.find((d) => d._id === id);
 
-    const existingEmployee = await Student.findById(data?.employee);
+  //   const existingEmployee = await Student.findById(data?.employee);
 
-    if (existingEmployee && data) {
-      const checkTodaysAttendance = await Attendance.findByIdAndDelete(id);
+  //   if (existingEmployee && data) {
+  //     const checkTodaysAttendance = await Attendance.findByIdAndDelete(id);
 
-      if (checkTodaysAttendance) {
-        await Student.findByIdAndUpdate(
-          existingEmployee._id,
-          { $pull: { attendance: id } },
-          { new: true, runValidators: true },
-        );
-      }
-    }
-  });
+  //     if (checkTodaysAttendance) {
+  //       await Student.findByIdAndUpdate(
+  //         existingEmployee._id,
+  //         { $pull: { attendance: id } },
+  //         { new: true, runValidators: true },
+  //       );
+  //     }
+  //   }
+  // });
 
-  return null;
+  // return null;
 };
 
 export const AttendanceServices = {

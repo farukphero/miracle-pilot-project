@@ -14,6 +14,8 @@ export interface TSibling {
 // Interface for Student
 export interface TStudent {
   auth: Types.ObjectId;
+
+  attendance: Types.ObjectId[];
   userId: string;
   studentId: string;
   profileImage: string;

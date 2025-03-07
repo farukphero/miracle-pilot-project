@@ -2,6 +2,8 @@ import { Types } from 'mongoose';
 
 export interface TTeacher {
   auth: Types.ObjectId;
+
+  attendance: Types.ObjectId[];
   userId: string;
   teacherId: string;
   profileImage: string;

@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 
 export interface TAccountOfficer {
   auth: Types.ObjectId;
+  attendance: Types.ObjectId[];
   userId: string;
   accountantId: string;
   profileImage: string;

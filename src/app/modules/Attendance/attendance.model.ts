@@ -3,40 +3,51 @@ import { TAttendance } from './attendance.interface';
 
 const attendanceSchema: Schema<TAttendance> = new Schema<TAttendance>(
   {
-    employee: {
-      type: Schema.ObjectId,
-      required: [true, 'Employee is required.'],
-      ref: 'Employee',
-    },
-    employeeId: {
-      type: String,
+    user: {
+      id: {
+        type: Schema.Types.ObjectId,
+        required: [true, 'User ID is required.'],
+        refPath: 'user.role', // Dynamic reference based on role
+      },
+      role: {
+        type: String,
+        enum: ['student', 'teacher', 'staff', 'accountant'],
+        required: [true, 'User role is required.'],
+      },
     },
     full_name: {
       type: String,
-    },
-    date: {
-      type: String,
+      required: [true, 'Full name is required.'],
+      trim: true,
     },
     designation: {
       type: String,
+      required: [true, 'Designation is required.'],
+      trim: true,
+    },
+    date: {
+      type: String,
+      required: [true, 'Date is required.'],
     },
     present: {
       type: Boolean,
+      default: false,
     },
     absent: {
       type: Boolean,
+      default: false,
     },
     office_time: {
       type: String,
+      required: [true, 'Office time is required.'],
     },
     in_time: {
       type: String,
+      required: [true, 'In time is required.'],
     },
     out_time: {
       type: String,
-    },
-    overtime: {
-      type: Number,
+      required: [true, 'Out time is required.'],
     },
     late_status: {
       type: Boolean,
@@ -45,10 +56,8 @@ const attendanceSchema: Schema<TAttendance> = new Schema<TAttendance>(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-export const Attendance = mongoose.model<TAttendance>(
-  'Attendance',
-  attendanceSchema,
-);
+// Create and export the Attendance model
+export const Attendance = mongoose.model<TAttendance>('Attendance', attendanceSchema);

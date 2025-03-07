@@ -17,6 +17,12 @@ const ExperiencesSchema = new Schema<TExperiences>(
 const AccountOfficerSchema = new Schema<TAccountOfficer>(
   {
     auth: { type: Schema.Types.ObjectId, ref: 'Auth' },
+    attendance: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Attendance',
+      },
+    ],
     userId: { type: String, required: [true, 'User ID is required.'] },
     accountantId: { type: String, required: [true, 'Accountant ID is required.'] },
     profileImage: { type: String, required: [true, 'Profile image is required.'] },

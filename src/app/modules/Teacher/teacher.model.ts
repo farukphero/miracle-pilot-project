@@ -4,6 +4,12 @@ import { TTeacher } from './teacher.interface';
 const TeacherSchema = new Schema<TTeacher>(
   {
     auth: { type: Schema.Types.ObjectId, ref: 'Auth', required: [true, 'Auth reference is required.'] },
+    attendance: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Attendance',
+      },
+    ],
     userId: { type: String, required: [true, 'User ID is required.'] },
     teacherId: { type: String, required: [true, 'Teacher ID is required.'] },
     profileImage: { type: String, required: [true, 'Profile image is required.'] },
