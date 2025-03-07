@@ -28,6 +28,5 @@ export const attendanceKeys: (keyof TAttendance)[] = [
   'office_time',
   'in_time',
   'out_time',
-  'overtime',
   'late_status',
 ];

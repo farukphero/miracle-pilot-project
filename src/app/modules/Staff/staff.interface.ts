@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 
 export interface TStaff {
   auth: Types.ObjectId;
+  attendance: Types.ObjectId[];
   userId: string;
   staffId: string;
   profileImage: string;

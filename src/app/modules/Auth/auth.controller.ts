@@ -23,8 +23,12 @@ const loginUser = catchAsync(async (req, res) => {
   const { refreshToken, token } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    secure: config.NODE_ENV === 'production',
     httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+    // sameSite: "none",
+    // path: "/",
+    // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+
   });
 
 
